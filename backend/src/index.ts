@@ -1,0 +1,67 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+import studentRoutes from './routes/students';
+import dutyRoutes from './routes/duties';
+import reportRoutes from './routes/reports';
+import botRoutes from './routes/bot';
+import { initializeScheduler } from './cron/scheduler';
+
+dotenv.config();
+
+const app = express();
+const prisma = new PrismaClient();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use('/api/students', studentRoutes);
+app.use('/api/duties', dutyRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/bot', botRoutes);
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal server error',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Start server
+const startServer = async () => {
+  try {
+    // Test database connection
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('✓ Database connected');
+
+    // Initialize scheduler
+    initializeScheduler();
+    console.log('✓ Scheduler initialized');
+
+    app.listen(PORT, () => {
+      console.log(`✓ Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});

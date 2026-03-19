@@ -1,0 +1,23 @@
+{
+  "name": "smart-hostel",
+  "version": "1.0.0",
+  "description": "Complete hostel duty management system",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "bot",
+    "admin"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w bot\" \"npm run dev -w admin\"",
+    "build": "npm run build -w backend && npm run build -w admin",
+    "start": "npm start -w backend",
+    "bot:start": "npm start -w bot",
+    "admin:start": "npm start -w admin",
+    "db:migrate": "npm run db:migrate -w backend",
+    "db:seed": "npm run db:seed -w backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

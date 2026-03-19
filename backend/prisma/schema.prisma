@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  name      String
+  role      String  @default("admin") // admin, manager
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Student {
+  id        Int     @id @default(autoincrement())
+  username  String  @unique
+  floor     Int     // 1-4
+  note      String?
+  telegramId String? @unique
+  isFrozen  Boolean @default(false)
+  frozenReason String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  duties    DutyStudent[]
+  reports   Report[]
+  botSessions BotSession[]
+
+  @@index([floor])
+  @@index([isFrozen])
+}
+
+model Duty {
+  id        Int     @id @default(autoincrement())
+  date      DateTime @unique
+  status    String  @default("pending") // pending, posted, completed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  students  DutyStudent[]
+}
+
+model DutyStudent {
+  id        Int     @id @default(autoincrement())
+  dutyId    Int
+  studentId Int
+  floor     Int     // Which floor they're assigned to
+  createdAt DateTime @default(now())
+
+  duty      Duty    @relation(fields: [dutyId], references: [id], onDelete: Cascade)
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([dutyId, studentId])
+  @@index([dutyId])
+  @@index([studentId])
+}
+
+model Report {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  dutyDate  DateTime
+  photoCount Int    @default(0)
+  status    String  @default("pending") // pending, approved, rejected
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([dutyDate])
+  @@index([status])
+}
+
+model RotationQueue {
+  id        Int     @id @default(autoincrement())
+  studentId Int     @unique
+  floor     Int
+  lastAssignedDate DateTime?
+  priority  Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([floor])
+  @@index([priority])
+}
+
+model BotSession {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  dutyDate  DateTime
+  step      String  @default("nickname") // nickname, photos, confirmation
+  nickname  String?
+  photoCount Int    @default(0)
+  messageIds String? // JSON array of message IDs for cleanup
+  status    String  @default("active") // active, completed, cancelled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, dutyDate])
+  @@index([dutyDate])
+  @@index([status])
+}
