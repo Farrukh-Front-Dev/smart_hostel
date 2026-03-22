@@ -1,44 +1,58 @@
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StatCardProps {
   icon: LucideIcon;
   label: string;
   value: number | string;
+  color: 'blue' | 'green' | 'red' | 'purple' | 'pink' | 'cyan';
   trend?: number;
-  color: 'blue' | 'green' | 'red' | 'purple';
 }
 
 const colorClasses = {
-  blue: 'from-blue-50 to-blue-100 border-blue-200 text-blue-600',
-  green: 'from-green-50 to-green-100 border-green-200 text-green-600',
-  red: 'from-red-50 to-red-100 border-red-200 text-red-600',
-  purple: 'from-purple-50 to-purple-100 border-purple-200 text-purple-600',
+  blue: 'from-blue-500 to-cyan-500',
+  green: 'from-green-500 to-emerald-500',
+  red: 'from-red-500 to-pink-500',
+  purple: 'from-purple-500 to-pink-500',
+  pink: 'from-pink-500 to-rose-500',
+  cyan: 'from-[#38C9E6] to-[#43E8A0]',
 };
 
-const iconBgClasses = {
-  blue: 'bg-blue-100 text-blue-600',
-  green: 'bg-green-100 text-green-600',
-  red: 'bg-red-100 text-red-600',
-  purple: 'bg-purple-100 text-purple-600',
-};
-
-export default function StatCard({ icon: Icon, label, value, trend, color }: StatCardProps) {
+export default function StatCard({ icon: Icon, label, value, color, trend }: StatCardProps) {
   return (
-    <div className={`bg-gradient-to-br ${colorClasses[color]} border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow`}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-slate-600 text-sm font-medium">{label}</p>
-          <p className="text-3xl font-bold text-slate-900 mt-2">{value}</p>
-          {trend !== undefined && (
-            <p className={`text-xs font-semibold mt-2 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% from last month
-            </p>
-          )}
+    <div className="bg-white dark:bg-dark-surface rounded-3xl p-6 border-2 border-gray-900 shadow-3d-md hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1">
+          <p className="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
+            {label}
+          </p>
+          <p className="text-5xl font-bold text-gray-900 dark:text-white">
+            {value}
+          </p>
         </div>
-        <div className={`${iconBgClasses[color]} p-3 rounded-lg`}>
-          <Icon size={24} />
+        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center border-2 border-gray-900 shadow-3d-sm`}>
+          <Icon className="w-7 h-7 text-white" />
         </div>
       </div>
+      
+      {trend !== undefined && (
+        <div className="flex items-center gap-2 text-sm">
+          {trend >= 0 ? (
+            <>
+              <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <span className="text-green-600 dark:text-green-400 font-bold">
+                +{trend}% bu oy
+              </span>
+            </>
+          ) : (
+            <>
+              <TrendingDown className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <span className="text-red-600 dark:text-red-400 font-bold">
+                {trend}% bu oy
+              </span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

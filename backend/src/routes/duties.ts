@@ -1,4 +1,5 @@
 import express from 'express';
+import axios from 'axios';
 import { DutyService } from '../services/dutyService';
 
 const router = express.Router();
@@ -109,6 +110,37 @@ router.post('/generate/:date', async (req, res, next) => {
     res.json({ message: 'Duties generated successfully' });
   } catch (error) {
     next(error);
+  }
+});
+
+// Manual send - trigger bot to send duties now
+router.post('/send-now', async (req, res, next) => {
+  try {
+    const BOT_API_URL = process.env.BOT_API_URL || 'http://localhost:3001';
+    
+    console.log('[BACKEND] Sending manual notification to bot:', BOT_API_URL);
+    
+    // Trigger bot to send duties
+    const response = await axios.post(`${BOT_API_URL}/api/notify/duties`, {}, {
+      timeout: 10000 // 10 seconds timeout
+    });
+    
+    console.log('[BACKEND] Bot response:', response.data);
+    
+    res.json({ 
+      success: true, 
+      message: 'Xabar Telegram guruhga yuborildi!',
+      data: response.data 
+    });
+  } catch (error: any) {
+    console.error('[BACKEND] Error sending manual notification:', error.message);
+    console.error('[BACKEND] Error details:', error.response?.data || error);
+    
+    res.status(500).json({ 
+      success: false, 
+      error: 'Xabar yuborishda xatolik yuz berdi',
+      details: error.response?.data?.error || error.message 
+    });
   }
 });
 

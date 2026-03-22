@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-white;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-primary {
+    background: linear-gradient(to bottom right, #38C9E6, #43E8A0);
+  }
+  
+  .bg-gradient-pink {
+    background: linear-gradient(to bottom right, #FF9B9B, #FF8888);
+  }
+  
+  .shadow-3d-hover {
+    transition: all 0.2s ease;
+  }
+  
+  .shadow-3d-hover:hover {
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    transform: translate(2px, 2px);
+  }
+  
+  .shadow-3d-lift:hover {
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,1);
+    transform: translate(-2px, -2px);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;

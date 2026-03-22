@@ -1,24 +1,21 @@
+import { ReactNode } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg">
       <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col ml-64 transition-all duration-300">
-        {/* Navbar */}
+      <div className="lg:pl-64">
         <Navbar />
-
-        {/* Content */}
-        <main className="flex-1 overflow-auto pt-20 pb-8 px-8">
-          {children}
+        <main className="py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

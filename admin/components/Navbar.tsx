@@ -1,73 +1,84 @@
-import { Clock, Globe, Bell, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Search, Bell, Moon, Sun, Globe } from 'lucide-react';
 import { useLanguage } from '../pages/_app';
-import { Language } from '../lib/i18n';
 
 export default function Navbar() {
   const { language, setLanguage } = useLanguage();
-  const [currentTime, setCurrentTime] = useState<string>('');
+  const [darkMode, setDarkMode] = useState(false);
+  const [time, setTime] = useState('');
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      setCurrentTime(`${hours}:${minutes}:${seconds}`);
+      setTime(now.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     };
-
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   return (
-    <div className="fixed top-0 left-64 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-40 transition-all duration-300">
-      {/* Search */}
-      <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
-          />
+    <header className="lg:pl-0 bg-white dark:bg-dark-surface border-b-4 border-gray-900 sticky top-0 z-20">
+      <div className="px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex items-center justify-between gap-4">
+          {/* Search */}
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Qidirish..."
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-900 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-cyan transition-all font-medium"
+              />
+            </div>
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            {/* Clock */}
+            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-primary text-white rounded-xl border-2 border-gray-900 shadow-3d font-bold">
+              <span>{time}</span>
+            </div>
+
+            {/* Language */}
+            <button
+              onClick={() => {
+                const langs = ['uz', 'en', 'ru'];
+                const currentIndex = langs.indexOf(language);
+                const nextIndex = (currentIndex + 1) % langs.length;
+                setLanguage(langs[nextIndex] as any);
+              }}
+              className="p-3 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border-2 border-gray-900 hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+            >
+              <Globe size={20} />
+            </button>
+
+            {/* Dark mode */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-3 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border-2 border-gray-900 hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+            >
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            {/* Notifications */}
+            <button className="p-3 bg-accent-pink text-white rounded-xl border-2 border-gray-900 shadow-3d hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all relative">
+              <Bell size={20} />
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-gray-900">
+                3
+              </span>
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Right Section */}
-      <div className="flex items-center gap-6 ml-8">
-        {/* Clock */}
-        <div className="flex items-center gap-2 text-slate-600">
-          <Clock size={18} />
-          <span className="font-mono text-sm font-semibold">{currentTime}</span>
-        </div>
-
-        {/* Language Selector */}
-        <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
-          <Globe size={18} className="text-slate-600 ml-2" />
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
-            className="bg-transparent border-0 outline-none cursor-pointer font-medium text-sm px-2"
-          >
-            <option value="uz">O'z</option>
-            <option value="en">Eng</option>
-            <option value="ru">Rus</option>
-          </select>
-        </div>
-
-        {/* Notifications */}
-        <button className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors">
-          <Bell size={20} className="text-slate-600" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
-
-        {/* User Avatar */}
-        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold cursor-pointer hover:shadow-lg transition-shadow">
-          A
-        </div>
-      </div>
-    </div>
+    </header>
   );
 }

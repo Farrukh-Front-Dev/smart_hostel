@@ -1,25 +1,21 @@
+import { ReactNode } from 'react';
+
 interface BadgeProps {
-  variant: 'success' | 'danger' | 'warning' | 'info' | 'default';
-  children: React.ReactNode;
-  size?: 'sm' | 'md';
+  children: ReactNode;
+  variant?: 'success' | 'warning' | 'error' | 'info' | 'neutral';
 }
 
 const variantClasses = {
-  success: 'bg-green-100 text-green-700 border border-green-200',
-  danger: 'bg-red-100 text-red-700 border border-red-200',
-  warning: 'bg-yellow-100 text-yellow-700 border border-yellow-200',
-  info: 'bg-blue-100 text-blue-700 border border-blue-200',
-  default: 'bg-slate-100 text-slate-700 border border-slate-200',
+  success: 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400',
+  warning: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400',
+  error: 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400',
+  info: 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400',
+  neutral: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400',
 };
 
-const sizeClasses = {
-  sm: 'px-2 py-1 text-xs font-medium rounded',
-  md: 'px-3 py-1.5 text-sm font-medium rounded-lg',
-};
-
-export default function Badge({ variant, children, size = 'md' }: BadgeProps) {
+export default function Badge({ children, variant = 'neutral' }: BadgeProps) {
   return (
-    <span className={`inline-block ${variantClasses[variant]} ${sizeClasses[size]}`}>
+    <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-bold border-2 border-gray-900 ${variantClasses[variant]}`}>
       {children}
     </span>
   );

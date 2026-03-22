@@ -12,14 +12,23 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
   // Endpoint to post today's duties to Telegram group
   app.post('/api/notify/duties', async (req, res) => {
     try {
+      console.log('[BOT] Received manual send request');
+      
       if (!TELEGRAM_GROUP_ID) {
         console.error('[BOT] TELEGRAM_GROUP_ID not set');
-        return res.status(400).json({ error: 'TELEGRAM_GROUP_ID not configured' });
+        return res.status(400).json({ 
+          success: false,
+          error: 'TELEGRAM_GROUP_ID not configured. Please set it in bot/.env file' 
+        });
       }
 
+      console.log('[BOT] Fetching today\'s duties from backend...');
+      
       // Fetch today's duties
       const response = await axios.get(`${BACKEND_URL}/api/duties/today`);
       const duties = response.data;
+
+      console.log('[BOT] Duties fetched:', duties);
 
       // Format message in Russian and Uzbek
       const today = new Date();
@@ -50,19 +59,34 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
         }
       }
 
+      console.log('[BOT] Sending message to Telegram group:', TELEGRAM_GROUP_ID);
+      console.log('[BOT] Message:', message);
+
       // Send to Telegram group
       await bot.telegram.sendMessage(TELEGRAM_GROUP_ID, message);
 
-      // Update duty status to posted
-      await axios.patch(`${BACKEND_URL}/api/duties/today/status`, {
-        status: 'posted',
-      });
+      console.log('[BOT] Message sent successfully');
 
-      console.log('[BOT] Duties posted to Telegram group');
+      // Update duty status to posted
+      try {
+        await axios.patch(`${BACKEND_URL}/api/duties/today/status`, {
+          status: 'posted',
+        });
+        console.log('[BOT] Duty status updated to posted');
+      } catch (statusError) {
+        console.error('[BOT] Failed to update duty status:', statusError);
+        // Don't fail the whole request if status update fails
+      }
+
       res.json({ success: true, message: 'Duties posted to Telegram' });
     } catch (error: any) {
       console.error('[BOT] Error posting duties:', error.message);
-      res.status(500).json({ error: error.message });
+      console.error('[BOT] Error stack:', error.stack);
+      res.status(500).json({ 
+        success: false,
+        error: error.message,
+        details: error.response?.data || 'Unknown error'
+      });
     }
   });
 
