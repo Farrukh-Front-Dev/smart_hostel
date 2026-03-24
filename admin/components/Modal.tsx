@@ -19,20 +19,20 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className={`bg-white rounded-xl shadow-xl ${sizeClasses[size]} w-full mx-4`}>
+      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-xl ${sizeClasses[size]} w-full mx-4 border-2 border-gray-900`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+        <div className="flex items-center justify-between p-6 border-b-2 border-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
-            <X size={20} className="text-slate-600" />
+            <X size={20} className="text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 text-gray-900 dark:text-gray-100">
           {children}
         </div>
       </div>

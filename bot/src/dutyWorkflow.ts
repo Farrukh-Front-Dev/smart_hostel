@@ -91,7 +91,10 @@ export async function handlePhotoUpload(ctx: Context) {
   if (!session || session.step !== 'photos') return;
 
   try {
-    const photo = ctx.message?.photo?.[ctx.message.photo.length - 1];
+    // Type guard to check if message has photo
+    if (!ctx.message || !('photo' in ctx.message) || !ctx.message.photo) return;
+    
+    const photo = ctx.message.photo[ctx.message.photo.length - 1];
     if (!photo) return;
 
     session.photoFileIds.push(photo.file_id);

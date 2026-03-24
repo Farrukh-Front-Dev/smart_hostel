@@ -39,25 +39,25 @@ export default function DataTable({ columns, data, loading, onRowClick }: DataTa
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="text-slate-600 mt-2">Loading...</p>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-900 p-8 text-center">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-cyan border-t-transparent"></div>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-900 overflow-hidden shadow-3d-md">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-900">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
                   onClick={() => col.sortable && handleSort(col.key)}
-                  className={`px-6 py-4 text-left text-sm font-semibold text-slate-700 ${
-                    col.sortable ? 'cursor-pointer hover:bg-slate-100' : ''
+                  className={`px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white ${
+                    col.sortable ? 'cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700' : ''
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export default function DataTable({ columns, data, loading, onRowClick }: DataTa
           <tbody>
             {sortedData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-6 py-8 text-center text-slate-500">
+                <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-600 dark:text-gray-400">
                   No data found
                 </td>
               </tr>
@@ -82,10 +82,10 @@ export default function DataTable({ columns, data, loading, onRowClick }: DataTa
                 <tr
                   key={idx}
                   onClick={() => onRowClick?.(row)}
-                  className="border-b border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-6 py-4 text-sm text-slate-700">
+                    <td key={col.key} className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
                       {col.render ? col.render(row[col.key], row) : row[col.key]}
                     </td>
                   ))}

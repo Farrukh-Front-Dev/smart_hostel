@@ -23,7 +23,7 @@ export default function Button({
     primary: 'bg-gradient-primary text-white shadow-3d hover:shadow-3d-lg hover:-translate-x-[2px] hover:-translate-y-[2px]',
     secondary: 'bg-accent-pink hover:bg-accent-pink-hover text-white shadow-3d hover:shadow-3d-lg hover:-translate-x-[2px] hover:-translate-y-[2px]',
     danger: 'bg-red-500 hover:bg-red-600 text-white shadow-3d hover:shadow-3d-lg hover:-translate-x-[2px] hover:-translate-y-[2px]',
-    ghost: 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700',
+    ghost: 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 border-gray-900',
   };
   
   const sizeClasses = {

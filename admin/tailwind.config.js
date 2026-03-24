@@ -8,12 +8,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'dark-bg': '#1a1a1a',
-        'dark-surface': '#2d2d2d',
+        'dark-bg': '#0f0f0f',
+        'dark-surface': '#1a1a1a',
         'primary-cyan': '#38C9E6',
         'primary-green': '#43E8A0',
         'accent-pink': '#FF9B9B',
         'accent-pink-hover': '#FF8888',
+        'light-bg': '#ffffff',
+        'light-surface': '#f5f5f5',
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(to bottom right, #38C9E6, #43E8A0)',

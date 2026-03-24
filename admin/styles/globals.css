@@ -4,7 +4,39 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-white;
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white;
+  }
+
+  input::placeholder {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  select::placeholder {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  /* Light mode scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
+  }
+}
+
+@layer components {
+  /* Card with glassmorphism effect */
+  .card-glass {
+    @apply bg-white/95 dark:bg-dark-surface/95 backdrop-blur-sm;
   }
 }
 

@@ -6,7 +6,8 @@ import { Telegraf, Context } from 'telegraf';
 export function setupMiddleware(bot: Telegraf<Context>) {
   // Log all messages
   bot.use((ctx, next) => {
-    console.log(`[BOT] Message from ${ctx.from?.username || ctx.from?.id}: ${ctx.message?.text || '[media]'}`);
+    const messageText = ctx.message && 'text' in ctx.message ? ctx.message.text : '[media]';
+    console.log(`[BOT] Message from ${ctx.from?.username || ctx.from?.id}: ${messageText}`);
     return next();
   });
 

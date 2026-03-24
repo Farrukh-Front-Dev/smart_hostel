@@ -1,1 +1,9 @@
-{"/_error":"pages/_error.js","/_document":"pages/_document.js","/duties":"pages/duties.html","/":"pages/index.html","/students":"pages/students.html","/settings":"pages/settings.html","/_app":"pages/_app.js","/404":"pages/404.html"}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/": "pages/index.js",
+  "/students": "pages/students.js",
+  "/settings": "pages/settings.js",
+  "/duties": "pages/duties.js"
+}

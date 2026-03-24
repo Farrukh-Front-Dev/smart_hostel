@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import Squares from './Squares';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,15 +9,29 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg">
-      <Sidebar />
-      <div className="lg:pl-64">
-        <Navbar />
-        <main className="py-8 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
-        </main>
+    <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 opacity-100 pointer-events-none z-0">
+        <Squares
+          direction="diagonal"
+          speed={0.5}
+          borderColor="rgba(255, 255, 255, 0.05)"
+          squareSize={60}
+          hoverFillColor="rgba(255, 255, 255, 0.02)"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10">
+        <Sidebar />
+        <div className="lg:pl-64">
+          <Navbar />
+          <main className="py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
