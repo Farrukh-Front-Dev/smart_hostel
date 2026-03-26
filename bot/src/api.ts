@@ -2,9 +2,6 @@ import express from 'express';
 import { Telegraf, Context } from 'telegraf';
 import axios from 'axios';
 
-const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:3000';
-const TELEGRAM_GROUP_ID = process.env.TELEGRAM_GROUP_ID;
-
 /**
  * Setup notification endpoint for backend to trigger bot actions
  */
@@ -13,6 +10,13 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
   app.post('/api/notify/duties', async (req, res) => {
     try {
       console.log('[BOT] Received manual send request');
+      
+      // Read environment variables at runtime
+      const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:3000';
+      const TELEGRAM_GROUP_ID = process.env.TELEGRAM_GROUP_ID;
+      
+      console.log('[BOT] Using BACKEND_URL:', BACKEND_URL);
+      console.log('[BOT] Using TELEGRAM_GROUP_ID:', TELEGRAM_GROUP_ID);
       
       if (!TELEGRAM_GROUP_ID) {
         console.error('[BOT] TELEGRAM_GROUP_ID not set');
@@ -42,9 +46,11 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
 
       for (const floor in duties.byFloor) {
         const students = duties.byFloor[floor];
+        const floorNum = parseInt(floor);
         if (students.length > 0) {
-          const floorNum = parseInt(floor);
           message += `${floorNum}-й этаж — ${students.map((s: any) => s.username || s.name).join(', ')}\n`;
+        } else {
+          message += `${floorNum}-й этаж — ИНТЕНСИВ\n`;
         }
       }
 
@@ -53,9 +59,11 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
 
       for (const floor in duties.byFloor) {
         const students = duties.byFloor[floor];
+        const floorNum = parseInt(floor);
         if (students.length > 0) {
-          const floorNum = parseInt(floor);
           message += `${floorNum}-etaj — ${students.map((s: any) => s.username || s.name).join(', ')}\n`;
+        } else {
+          message += `${floorNum}-etaj — INTENSIV\n`;
         }
       }
 

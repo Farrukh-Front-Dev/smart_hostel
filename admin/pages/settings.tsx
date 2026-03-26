@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Settings as SettingsIcon, User, Bell, Shield, Info, Save } from 'lucide-react';
-import Button from '../components/Button';
-import Badge from '../components/Badge';
+import Button from '../components/ui/Button';
+import Badge from '../components/ui/Badge';
 import { getTranslation } from '../lib/i18n';
 import { useLanguage } from './_app';
 

@@ -4,6 +4,5 @@
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
   "/students": "pages/students.js",
-  "/settings": "pages/settings.js",
   "/duties": "pages/duties.js"
 }

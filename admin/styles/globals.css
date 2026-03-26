@@ -15,6 +15,19 @@
     @apply text-gray-500 dark:text-gray-400;
   }
 
+  /* Select styling */
+  select {
+    @apply appearance-none cursor-pointer;
+  }
+
+  select option {
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
+  }
+
+  select option:checked {
+    @apply bg-gradient-primary text-white;
+  }
+
   /* Light mode scrollbar */
   ::-webkit-scrollbar {
     @apply w-2 h-2;
@@ -43,6 +56,15 @@
 @layer utilities {
   .bg-gradient-primary {
     background: linear-gradient(to bottom right, #38C9E6, #43E8A0);
+  }
+
+  /* Make text black inside gradient-primary in dark mode */
+  .dark .bg-gradient-primary {
+    color: #000000;
+  }
+
+  .dark .bg-gradient-primary * {
+    color: #000000;
   }
   
   .bg-gradient-pink {

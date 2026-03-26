@@ -2,7 +2,8 @@ import type { AppProps } from 'next/app';
 import { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Language } from '../lib/i18n';
-import Layout from '../components/Layout';
+import Layout from '../components/layout/Layout';
+import { ToastProvider } from '../components/common/Toast';
 import '../styles/globals.css';
 
 interface LanguageContextType {
@@ -102,21 +103,25 @@ export default function App({ Component, pageProps }: AppProps) {
   // If on public page, don't use Layout
   if (isPublicPage) {
     return (
-      <ThemeProvider>
-        <LanguageProvider>
-          <Component {...pageProps} />
-        </LanguageProvider>
-      </ThemeProvider>
+      <ToastProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <Component {...pageProps} />
+          </LanguageProvider>
+        </ThemeProvider>
+      </ToastProvider>
     );
   }
 
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </LanguageProvider>
-    </ThemeProvider>
+    <ToastProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </LanguageProvider>
+      </ThemeProvider>
+    </ToastProvider>
   );
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '../pages/_app';
-import Squares from '../components/Squares';
+import Squares from '../components/common/Squares';
 import credentials from '../lib/credentials.json';
 
 export default function Login() {
@@ -49,7 +49,7 @@ export default function Login() {
       <div className="fixed inset-0 opacity-100 pointer-events-none z-0">
         <Squares
           direction="diagonal"
-          speed={0.5}
+          speed={0.2}
           borderColor="rgba(255, 255, 255, 0.05)"
           squareSize={60}
           hoverFillColor="rgba(255, 255, 255, 0.02)"

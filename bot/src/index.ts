@@ -1,6 +1,14 @@
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+// Debug: Log if TELEGRAM_GROUP_ID is loaded
+console.log('[BOT] TELEGRAM_GROUP_ID:', process.env.TELEGRAM_GROUP_ID);
+
 import { Telegraf, Context } from 'telegraf';
 import express from 'express';
-import dotenv from 'dotenv';
 import { setupCommands } from './commands';
 import { setupMiddleware } from './middleware';
 import { setupNotificationEndpoint } from './api';
@@ -11,8 +19,6 @@ import {
   handleConfirmation,
   getActiveSession,
 } from './dutyWorkflow';
-
-dotenv.config();
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const BOT_PORT = parseInt(process.env.BOT_PORT || '3001');

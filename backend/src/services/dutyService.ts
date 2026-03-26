@@ -64,6 +64,7 @@ export class DutyService {
   /**
    * Assign 3 students to a specific floor
    * Uses rotation queue to ensure fair distribution
+   * Returns empty array if no students available (will show as INTENSIV)
    */
   private static async assignStudentsToFloor(floor: number, count: number) {
     // Get all non-frozen students on this floor
@@ -74,8 +75,14 @@ export class DutyService {
       },
     });
 
+    // If no students available, return empty array (will be marked as INTENSIV)
+    if (availableStudents.length === 0) {
+      return [];
+    }
+
+    // If fewer students than needed, return all available
     if (availableStudents.length < count) {
-      throw new Error(`Not enough available students on floor ${floor}`);
+      return availableStudents;
     }
 
     // Get rotation queue for these students
