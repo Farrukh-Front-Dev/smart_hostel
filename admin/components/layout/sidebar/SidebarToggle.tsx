@@ -9,9 +9,10 @@ export default function SidebarToggle({ isOpen, onClick }: SidebarToggleProps) {
   return (
     <button
       onClick={onClick}
-      className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gradient-primary text-white rounded-2xl border-2 border-gray-900 shadow-3d hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+      className="fixed top-4 left-4 z-50 p-3 sm:p-4 bg-gradient-primary text-black dark:text-black rounded-2xl border-2 border-gray-900 shadow-3d hover:shadow-3d-lg hover:-translate-y-1 transition-all"
+      title={isOpen ? 'Sidebarni yopish' : 'Sidebarni ochish'}
     >
-      {isOpen ? <X size={24} /> : <Menu size={24} />}
+      {isOpen ? <X size={28} /> : <Menu size={28} />}
     </button>
   );
 }

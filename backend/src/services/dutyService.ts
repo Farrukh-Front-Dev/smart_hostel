@@ -4,10 +4,11 @@ const prisma = new PrismaClient();
 
 /**
  * Duty generation algorithm:
- * - 3 students per floor per day
- * - 4 floors total
- * - Uses rotation queue to ensure fair distribution
- * - Skips frozen students
+ * - 3 active (non-frozen) peers per floor per day
+ * - 4 floors total (12 total peers per day)
+ * - Uses simple round-robin rotation through the list
+ * - Cycles continuously: always selects the 3 peers who haven't been assigned most recently
+ * - Skips frozen peers automatically
  */
 export class DutyService {
   /**
@@ -62,17 +63,18 @@ export class DutyService {
   }
 
   /**
-   * Assign 3 students to a specific floor
-   * Uses rotation queue to ensure fair distribution
+   * Assign 3 students to a specific floor using round-robin rotation
+   * Cycles through active students continuously
    * Returns empty array if no students available (will show as INTENSIV)
    */
   private static async assignStudentsToFloor(floor: number, count: number) {
-    // Get all non-frozen students on this floor
+    // Get all non-frozen students on this floor, sorted by ID for consistency
     const availableStudents = await prisma.student.findMany({
       where: {
         floor: floor,
         isFrozen: false,
       },
+      orderBy: { id: 'asc' },
     });
 
     // If no students available, return empty array (will be marked as INTENSIV)
@@ -97,33 +99,18 @@ export class DutyService {
     // Create a map for quick lookup
     const queueMap = new Map(rotationQueues.map(q => [q.studentId, q]));
 
-    // Sort by priority (lower = higher priority) and last assigned date
+    // Sort by last assigned date (oldest first = next in rotation)
     const sorted = availableStudents.sort((a: any, b: any) => {
       const queueA = queueMap.get(a.id);
       const queueB = queueMap.get(b.id);
       
-      const priorityDiff = (queueA?.priority || 0) - (queueB?.priority || 0);
-      if (priorityDiff !== 0) return priorityDiff;
-
       const dateA = queueA?.lastAssignedDate?.getTime() || 0;
       const dateB = queueB?.lastAssignedDate?.getTime() || 0;
       return dateA - dateB;
     });
 
-    // Select top 'count' students
+    // Select top 'count' students (those who haven't been assigned most recently)
     const selected = sorted.slice(0, count);
-
-    // Increment priority for non-selected students (they wait longer)
-    const nonSelected = sorted.slice(count);
-    for (const student of nonSelected) {
-      const queue = queueMap.get(student.id);
-      if (queue) {
-        await prisma.rotationQueue.update({
-          where: { id: queue.id },
-          data: { priority: (queue.priority || 0) + 1 },
-        });
-      }
-    }
 
     return selected;
   }
@@ -159,7 +146,7 @@ export class DutyService {
 
     return {
       id: duty.id,
-      date: duty.date,
+      date: duty.date.toISOString().split('T')[0],
       status: duty.status,
       byFloor,
       allStudents: duty.students.map((ds: any) => ds.student),
@@ -199,7 +186,7 @@ export class DutyService {
 
       return {
         id: duty.id,
-        date: duty.date,
+        date: duty.date.toISOString().split('T')[0],
         status: duty.status,
         byFloor,
         allStudents: duty.students.map((ds: any) => ds.student),

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Home, Users, Calendar, Settings } from 'lucide-react';
 import { getTranslation } from '../../../lib/i18n';
 import { useLanguage } from '../../../pages/_app';
+import { useSidebar } from '../../../lib/context/SidebarContext';
 import SidebarToggle from './SidebarToggle';
 import SidebarHeader from './SidebarHeader';
 import SidebarNavigation from './SidebarNavigation';
@@ -11,7 +12,7 @@ import SidebarLogout from './SidebarLogout';
 
 const getMenuItems = (t: (key: any) => string) => [
   { icon: Home, label: t('dashboard'), href: '/' },
-  { icon: Users, label: t('students'), href: '/students' },
+  { icon: Users, label: t('students'), href: '/peers' },
   { icon: Calendar, label: t('duties'), href: '/duties' },
   { icon: Settings, label: t('settings'), href: '/settings' },
 ];
@@ -19,9 +20,9 @@ const getMenuItems = (t: (key: any) => string) => [
 export default function Sidebar() {
   const router = useRouter();
   const { language } = useLanguage();
+  const { isOpen, setIsOpen } = useSidebar();
   const t = (key: keyof typeof import('../../../lib/i18n').translations.uz) => getTranslation(language, key);
   const menuItems = getMenuItems(t);
-  const [isOpen, setIsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState('');
 
   useEffect(() => {
@@ -36,12 +37,15 @@ export default function Sidebar() {
   };
 
   const handleMenuItemClick = () => {
-    setIsOpen(false);
+    // Don't close on desktop
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsOpen(false);
+    }
   };
 
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Toggle Button - Visible on all screens */}
       <SidebarToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
 
       {/* Mobile Overlay */}
@@ -54,9 +58,9 @@ export default function Sidebar() {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-64 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-r-3xl border-r-4 border-gray-900 transition-transform flex flex-col ${
+        className={`fixed top-0 left-0 z-40 h-screen w-64 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-r-3xl border-r-4 border-gray-900 transition-all flex flex-col ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 shadow-3d-lg`}
+        } shadow-3d-lg`}
       >
         {/* Header */}
         <SidebarHeader onClose={() => setIsOpen(false)} />

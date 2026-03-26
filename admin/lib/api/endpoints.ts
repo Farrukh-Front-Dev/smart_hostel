@@ -1,7 +1,7 @@
 import { api } from './client';
 
-// Students
-export const studentAPI = {
+// Peers (Students)
+export const peerAPI = {
   getAll: (floor?: number) => api.get('/api/students', { params: { floor } }),
   getById: (id: number) => api.get(`/api/students/${id}`),
   create: (data: any) => api.post('/api/students', data),
@@ -10,6 +10,9 @@ export const studentAPI = {
   unfreeze: (id: number) => api.post(`/api/students/${id}/unfreeze`),
   delete: (id: number) => api.delete(`/api/students/${id}`),
 };
+
+// Keep studentAPI for backward compatibility
+export const studentAPI = peerAPI;
 
 // Duties
 export const dutyAPI = {

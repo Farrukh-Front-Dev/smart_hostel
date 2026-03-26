@@ -43,7 +43,7 @@ export default function Dashboard() {
       setStats({ total, active, frozen, todaysDuties });
     } catch (error) {
       console.error('Failed to fetch stats:', error);
-      addToast('Statistikani yuklashda xatolik', 'error');
+      addToast(t('failedToSave' as any), 'error');
     } finally {
       setLoading(false);
     }
@@ -60,13 +60,13 @@ export default function Dashboard() {
       const response = await axios.post(`${API_URL}/api/duties/send-now`);
       
       if (response.data.success) {
-        addToast('Navbatchiliklar muvaffaqiyatli yuborildi', 'success');
+        addToast(t('successMessage' as any), 'success');
       } else {
-        addToast('Xatolik: ' + response.data.error, 'error');
+        addToast(t('errorMessage' as any) + response.data.error, 'error');
       }
     } catch (error: any) {
       console.error('Failed to send manual notification:', error);
-      addToast('Yuborishda xatolik: ' + (error.response?.data?.error || error.message), 'error');
+      addToast(t('sendError' as any) + (error.response?.data?.error || error.message), 'error');
     } finally {
       setSending(false);
     }
@@ -80,7 +80,7 @@ export default function Dashboard() {
           {t('dashboard' as any)}
         </h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg">
-          Tizimga xush kelibsiz
+          {t('welcomeMessage' as any)}
         </p>
       </div>
 
@@ -117,10 +117,10 @@ export default function Dashboard() {
         <div className="flex items-start justify-between mb-6">
           <div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Bugungi Navbatchiliklar
+              {t('todaysDuties' as any)}
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              {stats.todaysDuties} ta talaba navbatda
+              {stats.todaysDuties} ta peer navbatda
             </p>
           </div>
           <div className="w-14 h-14 rounded-2xl bg-gradient-primary flex items-center justify-center border-2 border-gray-900 shadow-3d">
@@ -132,7 +132,7 @@ export default function Dashboard() {
           disabled={sending}
           className="w-full bg-gradient-primary text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 border-2 border-gray-900 shadow-3d hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {sending ? 'Yuborilmoqda...' : 'Yuborish'}
+          {sending ? t('sending' as any) : t('sendNow' as any)}
           <ArrowRight size={20} />
         </button>
       </div>

@@ -1,24 +1,42 @@
-import { useState } from 'react';
-import { Settings as SettingsIcon, User, Bell, Shield, Info, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Settings as SettingsIcon, User, Bell, Shield, Info, Save, LogOut } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import { getTranslation } from '../lib/i18n';
 import { useLanguage } from './_app';
+import { useToast } from '../components/common/Toast';
+import { useRouter } from 'next/router';
 
 export default function Settings() {
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  const { addToast } = useToast();
+  const router = useRouter();
   const t = (key: any) => getTranslation(language, key as keyof typeof import('../lib/i18n').translations.uz);
   
+  const [currentUser, setCurrentUser] = useState('');
   const [settings, setSettings] = useState({
-    name: 'Admin',
-    email: 'admin@smarthostel.uz',
     notifications: true,
-    darkMode: false,
-    language: 'uz',
   });
 
+  useEffect(() => {
+    const user = localStorage.getItem('currentUser');
+    setCurrentUser(user || 'Admin');
+  }, []);
+
   const handleSave = () => {
-    alert(t('settingsSaved'));
+    addToast('Sozlamalar saqlandi', 'success');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('currentUser');
+    addToast('Tizimdan chiqdingiz', 'success');
+    router.push('/login');
+  };
+
+  const handleLanguageChange = (lang: 'uz' | 'ru' | 'en') => {
+    setLanguage(lang);
+    addToast(`Til o'zgartirildi: ${lang.toUpperCase()}`, 'success');
   };
 
   return (
@@ -34,12 +52,12 @@ export default function Settings() {
       </div>
 
       {/* Account Settings */}
-      <div className="bg-white dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-gray-900 shadow-3d-md">
-        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-primary rounded-xl sm:rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-sm flex-shrink-0">
-            <User size={20} className="sm:w-6 sm:h-6 text-white" />
+      <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 backdrop-blur-md rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 border-gray-900 shadow-3d-md">
+        <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-7 pb-4 sm:pb-5 border-b-2 border-gray-200 dark:border-gray-700">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-md flex-shrink-0">
+            <User size={24} className="sm:w-7 sm:h-7 text-black dark:text-black" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             {t('accountSettings')}
           </h2>
         </div>
@@ -47,43 +65,49 @@ export default function Settings() {
         <div className="space-y-4 sm:space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-900 dark:text-white mb-2">
-              {t('name')}
+              {t('username')}
             </label>
-            <input
-              type="text"
-              value={settings.name}
-              onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-900 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-cyan transition-all font-medium text-sm sm:text-base"
-            />
+            <div className="w-full px-4 py-3 border-2 border-gray-900 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-sm sm:text-base">
+              {currentUser}
+            </div>
           </div>
 
           <div>
             <label className="block text-sm font-bold text-gray-900 dark:text-white mb-2">
-              {t('email')}
+              {t('language')}
             </label>
-            <input
-              type="email"
-              value={settings.email}
-              onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-900 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-cyan transition-all font-medium text-sm sm:text-base"
-            />
+            <div className="flex gap-2 sm:gap-3">
+              {['uz', 'ru', 'en'].map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => handleLanguageChange(lang as 'uz' | 'ru' | 'en')}
+                  className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-gray-900 transition-all ${
+                    language === lang
+                      ? 'bg-gradient-primary text-black dark:text-black shadow-3d'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:shadow-3d-sm'
+                  }`}
+                >
+                  {lang.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Notification Settings */}
-      <div className="bg-white dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl p-8 border-2 border-gray-900 shadow-3d-md">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-sm">
-            <Bell size={24} className="text-white" />
+      <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 backdrop-blur-md rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 border-gray-900 shadow-3d-md">
+        <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-7 pb-4 sm:pb-5 border-b-2 border-gray-200 dark:border-gray-700">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-md flex-shrink-0">
+            <Bell size={24} className="sm:w-7 sm:h-7 text-black dark:text-black" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             {t('notifications')}
           </h2>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
+          <div className="flex items-center justify-between p-4 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900 hover:shadow-3d-sm transition-all">
             <div>
               <p className="font-bold text-gray-900 dark:text-white mb-1">
                 {t('emailNotifications')}
@@ -94,8 +118,8 @@ export default function Settings() {
             </div>
             <button
               onClick={() => setSettings({ ...settings, notifications: !settings.notifications })}
-              className={`relative w-14 h-8 rounded-full border-2 border-gray-900 transition-colors ${
-                settings.notifications ? 'bg-green-500' : 'bg-gray-300'
+              className={`relative w-14 h-8 rounded-full border-2 border-gray-900 transition-colors flex-shrink-0 ${
+                settings.notifications ? 'bg-green-500' : 'bg-gray-400'
               }`}
             >
               <div
@@ -108,75 +132,43 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Security Settings */}
-      <div className="bg-white dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl p-8 border-2 border-gray-900 shadow-3d-md">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-sm">
-            <Shield size={24} className="text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t('security')}
-          </h2>
-        </div>
-
-        <div className="space-y-4">
-          <button className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left">
-            <p className="font-bold text-gray-900 dark:text-white mb-1">
-              {t('changePassword')}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('changePasswordDesc')}
-            </p>
-          </button>
-
-          <button className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left">
-            <p className="font-bold text-gray-900 dark:text-white mb-1">
-              {t('twoFactor')}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('twoFactorDesc')}
-            </p>
-          </button>
-        </div>
-      </div>
-
       {/* System Info */}
-      <div className="bg-white dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl p-8 border-2 border-gray-900 shadow-3d-md">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-sm">
-            <Info size={24} className="text-white" />
+      <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 backdrop-blur-md rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 border-gray-900 shadow-3d-md">
+        <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-7 pb-4 sm:pb-5 border-b-2 border-gray-200 dark:border-gray-700">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-md flex-shrink-0">
+            <Info size={24} className="sm:w-7 sm:h-7 text-black dark:text-black" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             {t('systemInfo')}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-semibold">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-4 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-semibold">
               {t('versionLabel')}
             </p>
             <p className="text-lg font-bold text-gray-900 dark:text-white">
-              {t('version')}
+              v1.0.0
             </p>
           </div>
 
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-semibold">
+          <div className="p-4 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-semibold">
               {t('statusLabel')}
             </p>
             <Badge variant="success">{t('active')}</Badge>
           </div>
 
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-semibold">
+          <div className="p-4 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-semibold">
               {t('backendLabel')}
             </p>
             <Badge variant="success">{t('connected')}</Badge>
           </div>
 
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-semibold">
+          <div className="p-4 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-semibold">
               {t('botLabel')}
             </p>
             <Badge variant="success">{t('running')}</Badge>
@@ -184,12 +176,22 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} variant="primary" size="lg">
-          <Save size={20} />
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
+        <button
+          onClick={handleLogout}
+          className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-sm sm:text-base border-2 border-gray-900 shadow-3d hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+        >
+          <LogOut size={18} />
+          {t('logout')}
+        </button>
+        <button
+          onClick={handleSave}
+          className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-primary text-black dark:text-black rounded-xl font-bold text-sm sm:text-base border-2 border-gray-900 shadow-3d hover:shadow-3d-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+        >
+          <Save size={18} />
           {t('save')}
-        </Button>
+        </button>
       </div>
     </div>
   );

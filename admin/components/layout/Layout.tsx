@@ -2,12 +2,15 @@ import { ReactNode } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import Navbar from './navbar/Navbar';
 import Squares from '../common/Squares';
+import { useSidebar } from '../../lib/context/SidebarContext';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { isOpen } = useSidebar();
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
       {/* Animated Background */}
@@ -22,12 +25,12 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 w-full">
         <Sidebar />
-        <div className="lg:pl-64">
+        <div className={`w-full transition-all duration-300 ease-in-out ${isOpen ? 'lg:pl-64' : 'lg:pl-0'}`}>
           <Navbar />
-          <main className="pt-20 sm:pt-24 py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+          <main className="w-full pt-20 sm:pt-24 py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-8">
+            <div className="w-full max-w-7xl mx-auto">
               {children}
             </div>
           </main>

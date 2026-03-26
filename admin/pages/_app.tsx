@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { Language } from '../lib/i18n';
 import Layout from '../components/layout/Layout';
 import { ToastProvider } from '../components/common/Toast';
+import { SidebarProvider } from '../lib/context/SidebarContext';
+import LoadingScreen from '../components/common/LoadingScreen';
 import '../styles/globals.css';
 
 interface LanguageContextType {
@@ -93,11 +95,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [isAuthenticated, isLoading, isPublicPage, router]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-cyan border-t-transparent"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // If on public page, don't use Layout
@@ -117,9 +115,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <ToastProvider>
       <ThemeProvider>
         <LanguageProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <SidebarProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </SidebarProvider>
         </LanguageProvider>
       </ThemeProvider>
     </ToastProvider>

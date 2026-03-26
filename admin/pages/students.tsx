@@ -3,6 +3,8 @@ import { studentAPI } from '../lib/api';
 import { getTranslation } from '../lib/i18n';
 import { useLanguage } from './_app';
 import { useToast } from '../components/common/Toast';
+import Modal from '../components/common/Modal';
+import Button from '../components/ui/Button';
 import StudentsHeader from '../components/features/students/StudentsHeader';
 import StudentsFilters from '../components/features/students/StudentsFilters';
 import StudentsTable from '../components/features/students/StudentsTable';
@@ -16,6 +18,7 @@ interface Student {
   floor: number;
   isFrozen: boolean;
   frozenReason?: string;
+  note?: string;
 }
 
 export default function Students() {
@@ -27,9 +30,14 @@ export default function Students() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-  const [formData, setFormData] = useState({ username: '', floor: 1 });
+  const [freezingStudent, setFreezingStudent] = useState<Student | null>(null);
+  const [shouldFreezeAfterSave, setShouldFreezeAfterSave] = useState(false);
+  const [formData, setFormData] = useState({ username: '', floor: 1, freezeReason: '', note: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [floorFilter, setFloorFilter] = useState<number | 'all'>('all');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchStudents();
@@ -42,7 +50,7 @@ export default function Students() {
       setStudents(response.data);
     } catch (error) {
       console.error('Error:', error);
-      addToast('Talabalarni yuklashda xatolik', 'error');
+      addToast('Peerlarni yuklashda xatolik', 'error');
     } finally {
       setLoading(false);
     }
@@ -52,15 +60,24 @@ export default function Students() {
     e.preventDefault();
     try {
       if (editingStudent) {
-        await studentAPI.update(editingStudent.id, formData);
-        addToast('Talaba muvaffaqiyatli yangilandi', 'success');
+        // Edit mode
+        await studentAPI.update(editingStudent.id, { username: formData.username, floor: formData.floor, note: formData.note });
+        addToast('Peer muvaffaqiyatli yangilandi', 'success');
+        
+        // If shouldFreezeAfterSave is true, freeze the student
+        if (shouldFreezeAfterSave) {
+          await studentAPI.freeze(editingStudent.id, formData.note);
+          addToast('Peer muvaffaqiyatli muzlatildi', 'success');
+          setShouldFreezeAfterSave(false);
+        }
       } else {
-        await studentAPI.create(formData);
-        addToast('Talaba muvaffaqiyatli qo\'shildi', 'success');
+        // Create mode
+        await studentAPI.create({ username: formData.username, floor: formData.floor, note: formData.note });
+        addToast('Peer muvaffaqiyatli qo\'shildi', 'success');
       }
       fetchStudents();
       setShowModal(false);
-      setFormData({ username: '', floor: 1 });
+      setFormData({ username: '', floor: 1, freezeReason: '', note: '' });
       setEditingStudent(null);
     } catch (error) {
       addToast(t('failedToSave'), 'error');
@@ -68,34 +85,40 @@ export default function Students() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm(t('areYouSure'))) {
-      try {
-        await studentAPI.delete(id);
-        addToast('Talaba muvaffaqiyatli o\'chirildi', 'success');
-        fetchStudents();
-      } catch (error) {
-        addToast(t('failedToDelete'), 'error');
-      }
+    const student = students.find(s => s.id === id);
+    if (student) {
+      setStudentToDelete(student);
+      setDeleteConfirmOpen(true);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!studentToDelete) return;
+    try {
+      setDeleting(true);
+      await studentAPI.delete(studentToDelete.id);
+      addToast('Peer muvaffaqiyatli o\'chirildi', 'success');
+      fetchStudents();
+      setDeleteConfirmOpen(false);
+      setStudentToDelete(null);
+    } catch (error) {
+      addToast(t('failedToDelete'), 'error');
+    } finally {
+      setDeleting(false);
     }
   };
 
   const handleFreeze = async (student: Student) => {
-    const reason = prompt(t('freezeReason'));
-    if (reason) {
-      try {
-        await studentAPI.freeze(student.id, reason);
-        addToast('Talaba muvaffaqiyatli muzlatildi', 'success');
-        fetchStudents();
-      } catch (error) {
-        addToast(t('failedToFreeze'), 'error');
-      }
-    }
+    setEditingStudent(student);
+    setShouldFreezeAfterSave(true);
+    setFormData({ username: student.username, floor: student.floor, freezeReason: '', note: student.note || '' });
+    setShowModal(true);
   };
 
   const handleUnfreeze = async (id: number) => {
     try {
       await studentAPI.unfreeze(id);
-      addToast('Talaba muvaffaqiyatli faollashtirild', 'success');
+      addToast('Peer muvaffaqiyatli faollashtirild', 'success');
       fetchStudents();
     } catch (error) {
       addToast(t('failedToUnfreeze'), 'error');
@@ -104,14 +127,16 @@ export default function Students() {
 
   const handleEdit = (student: Student) => {
     setEditingStudent(student);
-    setFormData({ username: student.username, floor: student.floor });
+    setFormData({ username: student.username, floor: student.floor, freezeReason: '', note: student.note || '' });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingStudent(null);
-    setFormData({ username: '', floor: 1 });
+    setFreezingStudent(null);
+    setShouldFreezeAfterSave(false);
+    setFormData({ username: '', floor: 1, freezeReason: '', note: '' });
   };
 
   const filteredStudents = students.filter(s => {
@@ -172,14 +197,58 @@ export default function Students() {
       {/* Modal */}
       <StudentsModal
         isOpen={showModal}
-        title={editingStudent ? t('updateStudent') : t('newStudent')}
+        title={freezingStudent ? 'Peerni muzlatish' : (editingStudent ? t('updateStudent') : t('newStudent'))}
         username={formData.username}
         floor={formData.floor}
+        note={formData.note}
+        isFreezeMode={!!freezingStudent}
         onUsernameChange={(value) => setFormData({ ...formData, username: value })}
         onFloorChange={(value) => setFormData({ ...formData, floor: value })}
+        onNoteChange={(value) => setFormData({ ...formData, note: value })}
         onSubmit={handleSubmit}
         onClose={handleCloseModal}
       />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setStudentToDelete(null);
+        }}
+        title="Peerni o'chirish"
+        size="sm"
+        variant="danger"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-900 dark:text-white">
+            Siz <span className="font-bold">{studentToDelete?.username}</span> peerni o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi.
+          </p>
+          <div className="flex gap-3 pt-4">
+            <Button
+              type="button"
+              onClick={() => {
+                setDeleteConfirmOpen(false);
+                setStudentToDelete(null);
+              }}
+              variant="ghost"
+              className="flex-1"
+              disabled={deleting}
+            >
+              Bekor qilish
+            </Button>
+            <Button
+              type="button"
+              onClick={confirmDelete}
+              variant="danger"
+              className="flex-1"
+              loading={deleting}
+            >
+              O'chirish
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
