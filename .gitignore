@@ -34,3 +34,17 @@ Thumbs.db
 
 # Prisma journal (temporary file)
 prisma/dev.db-journal
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+backend/.env
+backend/.env.local
+bot/.env
+bot/.env.local
+admin/.env.local
+
+# Database
+backend/prisma/dev.db
+backend/prisma/dev.db-journal

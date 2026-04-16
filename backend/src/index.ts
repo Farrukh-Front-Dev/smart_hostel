@@ -7,7 +7,9 @@ import dutyRoutes from './routes/duties';
 import botRoutes from './routes/bot';
 import settingsRoutes from './routes/settings';
 import paymentRoutes from './routes/payments';
+import statusRoutes from './routes/status';
 import { initializeScheduler } from './cron/scheduler';
+import { startKeepAlive } from './keepAlive';
 
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.use('/api/duties', dutyRoutes);
 app.use('/api/bot', botRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/status', statusRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -50,6 +53,12 @@ const startServer = async () => {
     // Initialize scheduler
     initializeScheduler();
     console.log('✓ Scheduler initialized');
+
+    // Start keep-alive for Render free tier
+    if (process.env.NODE_ENV === 'production') {
+      startKeepAlive();
+      console.log('✓ Keep-alive started');
+    }
 
     app.listen(PORT, () => {
       console.log(`✓ Server running on http://localhost:${PORT}`);

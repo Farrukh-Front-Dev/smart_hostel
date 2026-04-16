@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Save, MessageSquare, Globe } from 'lucide-react';
+import { Save, MessageSquare, Globe, Server, RefreshCw } from 'lucide-react';
 import Badge from '../components/ui/Badge';
 import { getTranslation } from '../lib/i18n';
 import { useLanguage } from './_app';
 import { useToast } from '../components/common/Toast';
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
 
 export default function Settings() {
   const { language, setLanguage } = useLanguage();
@@ -21,12 +21,33 @@ export default function Settings() {
   const [originalDutyFormat, setOriginalDutyFormat] = useState<'simple' | 'timed'>('simple');
   const [originalPostWithImage, setOriginalPostWithImage] = useState<boolean>(true);
 
+  // Service status
+  const [services, setServices] = useState<any[]>([]);
+  const [statusLoading, setStatusLoading] = useState(false);
+
   // Check if there are unsaved changes
   const hasChanges = dutyFormat !== originalDutyFormat || postWithImage !== originalPostWithImage;
+
+  const checkServiceStatus = async () => {
+    setStatusLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/api/status/all`);
+      setServices(response.data.services);
+    } catch (error) {
+      console.error('Failed to check service status:', error);
+    } finally {
+      setStatusLoading(false);
+    }
+  };
 
   useEffect(() => {
     loadDutyFormat();
     loadPostImageSetting();
+    checkServiceStatus();
+    
+    // Check service status every 30 seconds
+    const interval = setInterval(checkServiceStatus, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const loadDutyFormat = async () => {
@@ -90,6 +111,49 @@ export default function Settings() {
         <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400">
           {t('settingsDesc')}
         </p>
+      </div>
+
+      {/* Service Status */}
+      <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 backdrop-blur-md rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 border-gray-900 shadow-3d-md">
+        <div className="flex items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-7 pb-4 sm:pb-5 border-b-2 border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-primary rounded-2xl flex items-center justify-center border-2 border-gray-900 shadow-3d-md flex-shrink-0">
+              <Server size={24} className="sm:w-7 sm:h-7 text-black dark:text-black" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              Xizmatlar Holati
+            </h2>
+          </div>
+          <button
+            onClick={checkServiceStatus}
+            disabled={statusLoading}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all disabled:opacity-50"
+          >
+            <RefreshCw size={20} className={`text-gray-600 dark:text-gray-400 ${statusLoading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {services.map((service) => (
+            <div
+              key={service.name}
+              className="p-4 rounded-xl border-2 border-gray-900 bg-gray-50 dark:bg-gray-800"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-base text-gray-900 dark:text-white">
+                  {service.name}
+                </h3>
+                <Badge variant={service.status === 'online' ? 'success' : 'error'}>
+                  {service.status === 'online' ? '🟢 Online' : '🔴 Offline'}
+                </Badge>
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                <p>Javob vaqti: {service.responseTime}ms</p>
+                <p>Tekshirilgan: {new Date(service.lastChecked).toLocaleTimeString('uz-UZ')}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Language Settings */}

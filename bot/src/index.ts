@@ -13,6 +13,7 @@ import express from 'express';
 import { setupCommands } from './commands';
 import { setupMiddleware } from './middleware';
 import { setupNotificationEndpoint } from './api';
+import { startKeepAlive } from './keepAlive';
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const BOT_PORT = parseInt(process.env.BOT_PORT || '3001');
@@ -37,7 +38,10 @@ setupCommands(bot);
 // Setup notification endpoint
 setupNotificationEndpoint(app, bot);
 
-// No additional message handlers needed
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // Start bot
 const startBot = async () => {
@@ -50,6 +54,12 @@ const startBot = async () => {
     // Start bot polling
     await bot.launch();
     console.log('✓ Telegram bot started');
+
+    // Start keep-alive for Render free tier
+    if (process.env.NODE_ENV === 'production') {
+      startKeepAlive();
+      console.log('✓ Keep-alive started');
+    }
 
     // Graceful shutdown
     process.once('SIGINT', () => bot.stop('SIGINT'));

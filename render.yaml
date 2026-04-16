@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: smart-hostel-backend-bot
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3003
+      - key: BACKEND_URL
+        fromService:
+          name: smart-hostel-backend-bot
+          property: host
+      - key: BOT_URL
+        fromService:
+          name: smart-hostel-backend-bot
+          property: host
+      - key: DATABASE_URL
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_DUTY_GROUP_ID
+        sync: false
+      - key: TELEGRAM_PAYMENT_GROUP_ID
+        sync: false
+      - key: BACKEND_API_URL
+        sync: false
