@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import studentRoutes from './routes/students';
 import dutyRoutes from './routes/duties';
@@ -11,7 +12,7 @@ import statusRoutes from './routes/status';
 import { initializeScheduler } from './cron/scheduler';
 import { startKeepAlive } from './keepAlive';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
 const prisma = new PrismaClient();
