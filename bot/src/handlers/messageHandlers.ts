@@ -58,6 +58,11 @@ export class MessageHandlers {
     console.log('[MessageHandlers] Checking keyboard button:', text);
 
     switch (text) {
+      case '💳 Oplata yuborish':
+        console.log('[MessageHandlers] Starting payment');
+        await this.startPayment(ctx, userId);
+        return true;
+
       case '📅 Bugungi navbatchilik':
         console.log('[MessageHandlers] Showing today duties');
         await this.showTodayDuties(ctx);

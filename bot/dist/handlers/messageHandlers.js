@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageHandlers = void 0;
 const stateManager_1 = require("../services/stateManager");
 const studentService_1 = require("../services/studentService");
+const dutyService_1 = require("../services/dutyService");
 const messageTracker_1 = require("../services/messageTracker");
 const constants_1 = require("../config/constants");
 const messages_1 = require("../utils/messages");
@@ -58,21 +59,17 @@ class MessageHandlers {
                 console.log('[MessageHandlers] Starting payment');
                 await this.startPayment(ctx, userId);
                 return true;
+            case '📅 Bugungi navbatchilik':
+                console.log('[MessageHandlers] Showing today duties');
+                await this.showTodayDuties(ctx);
+                return true;
+            case '📅 Ertangi navbatchilik':
+                console.log('[MessageHandlers] Showing tomorrow duties');
+                await this.showTomorrowDuties(ctx);
+                return true;
             case '❌ Bekor qilish':
                 console.log('[MessageHandlers] Cancelling payment');
                 await this.cancelPayment(ctx, userId);
-                return true;
-            case '📆 Haftalik jadval':
-                console.log('[MessageHandlers] Showing weekly schedule');
-                await this.showWeeklySchedule(ctx);
-                return true;
-            case 'ℹ️ Ma\'lumot':
-                console.log('[MessageHandlers] Showing info');
-                await this.showInfo(ctx);
-                return true;
-            case '⚙️ Yordam':
-                console.log('[MessageHandlers] Showing help');
-                await this.showHelp(ctx);
                 return true;
             default:
                 console.log('[MessageHandlers] Not a keyboard button');
@@ -120,13 +117,53 @@ class MessageHandlers {
         await ctx.reply(`ℹ️ SmartHostel Bot\n\n` +
             `Bu bot hostel boshqaruvi uchun yaratilgan.\n\n` +
             `Imkoniyatlar:\n` +
-            `• To'lov yuborish\n` +
             `• Navbatchiliklar jadvali\n` +
             `• Bildirishnomalar\n\n` +
             `Yordam uchun: /help`);
     }
     static async showHelp(ctx) {
         await ctx.reply(messages_1.MESSAGES.HELP);
+    }
+    static async showTodayDuties(ctx) {
+        try {
+            const today = new Date();
+            const duties = await dutyService_1.DutyService.getDutiesForDate(today);
+            const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+            const dayName = days[today.getDay()];
+            const dayNum = today.getDate();
+            const monthNum = today.getMonth() + 1;
+            const year = today.getFullYear();
+            const title = `📅 Bugun: ${dayName}, ${dayNum}.${monthNum}.${year}`;
+            const message = (0, messages_1.formatDutiesMessage)(title, duties);
+            await ctx.reply(message, {
+                parse_mode: 'Markdown'
+            });
+        }
+        catch (error) {
+            console.error('[MessageHandlers] Error fetching today duties:', error.message);
+            await ctx.reply(messages_1.MESSAGES.DUTIES_NOT_FOUND);
+        }
+    }
+    static async showTomorrowDuties(ctx) {
+        try {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const duties = await dutyService_1.DutyService.getDutiesForDate(tomorrow);
+            const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+            const dayName = days[tomorrow.getDay()];
+            const dayNum = tomorrow.getDate();
+            const monthNum = tomorrow.getMonth() + 1;
+            const year = tomorrow.getFullYear();
+            const title = `📅 Ertaga: ${dayName}, ${dayNum}.${monthNum}.${year}`;
+            const message = (0, messages_1.formatDutiesMessage)(title, duties);
+            await ctx.reply(message, {
+                parse_mode: 'Markdown'
+            });
+        }
+        catch (error) {
+            console.error('[MessageHandlers] Error fetching tomorrow duties:', error.message);
+            await ctx.reply(messages_1.MESSAGES.DUTIES_NOT_FOUND);
+        }
     }
     static async showWeeklySchedule(ctx) {
         await ctx.reply('📆 Haftalik navbatchilik jadvali\n\n' +

@@ -1,5 +1,6 @@
 export const getMainKeyboard = () => ({
   keyboard: [
+    [{ text: '💳 Oplata yuborish' }],
     [{ text: '📅 Bugungi navbatchilik' }, { text: '📅 Ertangi navbatchilik' }]
   ],
   resize_keyboard: true,

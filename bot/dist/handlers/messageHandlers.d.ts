@@ -6,6 +6,8 @@ export declare class MessageHandlers {
     private static cancelPayment;
     private static showInfo;
     private static showHelp;
+    private static showTodayDuties;
+    private static showTomorrowDuties;
     private static showWeeklySchedule;
     private static handleNickInput;
     static handlePhoto(ctx: Context, bot: Telegraf): Promise<void>;
