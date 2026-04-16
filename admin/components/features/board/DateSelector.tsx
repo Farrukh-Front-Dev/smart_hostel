@@ -27,15 +27,6 @@ export default function DateSelector({
     <div className="mb-4">
       {/* Rounded Navigation Bar */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-1.5 border-2 border-gray-900 shadow-3d-md inline-flex items-center gap-1 w-full sm:w-auto">
-        {/* Previous Day */}
-        <button
-          onClick={() => onDateChange(-1)}
-          className="p-2 sm:p-2.5 bg-gray-100 dark:bg-gray-700 rounded-xl border-2 border-gray-900 hover:shadow-3d-sm transition-all flex-shrink-0"
-          aria-label={t('previousDay')}
-        >
-          <span className="text-base sm:text-lg font-bold">←</span>
-        </button>
-
         {/* Quick Date Pills */}
         <button
           onClick={onSetToday}
@@ -65,15 +56,6 @@ export default function DateSelector({
             {formatDate(selectedDate)}
           </span>
         </div>
-
-        {/* Next Day */}
-        <button
-          onClick={() => onDateChange(1)}
-          className="p-2 sm:p-2.5 bg-gray-100 dark:bg-gray-700 rounded-xl border-2 border-gray-900 hover:shadow-3d-sm transition-all flex-shrink-0"
-          aria-label={t('nextDay')}
-        >
-          <span className="text-base sm:text-lg font-bold">→</span>
-        </button>
       </div>
     </div>
   );

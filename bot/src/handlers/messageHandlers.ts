@@ -58,29 +58,19 @@ export class MessageHandlers {
     console.log('[MessageHandlers] Checking keyboard button:', text);
 
     switch (text) {
-      case '💳 Oplata yuborish':
-        console.log('[MessageHandlers] Starting payment');
-        await this.startPayment(ctx, userId);
+      case '📅 Bugungi navbatchilik':
+        console.log('[MessageHandlers] Showing today duties');
+        await this.showTodayDuties(ctx);
+        return true;
+
+      case '📅 Ertangi navbatchilik':
+        console.log('[MessageHandlers] Showing tomorrow duties');
+        await this.showTomorrowDuties(ctx);
         return true;
 
       case '❌ Bekor qilish':
         console.log('[MessageHandlers] Cancelling payment');
         await this.cancelPayment(ctx, userId);
-        return true;
-
-      case '📆 Haftalik jadval':
-        console.log('[MessageHandlers] Showing weekly schedule');
-        await this.showWeeklySchedule(ctx);
-        return true;
-
-      case 'ℹ️ Ma\'lumot':
-        console.log('[MessageHandlers] Showing info');
-        await this.showInfo(ctx);
-        return true;
-
-      case '⚙️ Yordam':
-        console.log('[MessageHandlers] Showing help');
-        await this.showHelp(ctx);
         return true;
 
       default:
@@ -136,7 +126,6 @@ export class MessageHandlers {
       `ℹ️ SmartHostel Bot\n\n` +
       `Bu bot hostel boshqaruvi uchun yaratilgan.\n\n` +
       `Imkoniyatlar:\n` +
-      `• To'lov yuborish\n` +
       `• Navbatchiliklar jadvali\n` +
       `• Bildirishnomalar\n\n` +
       `Yordam uchun: /help`
@@ -145,6 +134,53 @@ export class MessageHandlers {
 
   private static async showHelp(ctx: Context): Promise<void> {
     await ctx.reply(MESSAGES.HELP);
+  }
+
+  private static async showTodayDuties(ctx: Context): Promise<void> {
+    try {
+      const today = new Date();
+      const duties = await DutyService.getDutiesForDate(today);
+      
+      const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+      const dayName = days[today.getDay()];
+      const dayNum = today.getDate();
+      const monthNum = today.getMonth() + 1;
+      const year = today.getFullYear();
+      
+      const title = `📅 Bugun: ${dayName}, ${dayNum}.${monthNum}.${year}`;
+      const message = formatDutiesMessage(title, duties);
+      
+      await ctx.reply(message, {
+        parse_mode: 'Markdown'
+      });
+    } catch (error: any) {
+      console.error('[MessageHandlers] Error fetching today duties:', error.message);
+      await ctx.reply(MESSAGES.DUTIES_NOT_FOUND);
+    }
+  }
+
+  private static async showTomorrowDuties(ctx: Context): Promise<void> {
+    try {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const duties = await DutyService.getDutiesForDate(tomorrow);
+      
+      const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+      const dayName = days[tomorrow.getDay()];
+      const dayNum = tomorrow.getDate();
+      const monthNum = tomorrow.getMonth() + 1;
+      const year = tomorrow.getFullYear();
+      
+      const title = `📅 Ertaga: ${dayName}, ${dayNum}.${monthNum}.${year}`;
+      const message = formatDutiesMessage(title, duties);
+      
+      await ctx.reply(message, {
+        parse_mode: 'Markdown'
+      });
+    } catch (error: any) {
+      console.error('[MessageHandlers] Error fetching tomorrow duties:', error.message);
+      await ctx.reply(MESSAGES.DUTIES_NOT_FOUND);
+    }
   }
 
   private static async showWeeklySchedule(ctx: Context): Promise<void> {
