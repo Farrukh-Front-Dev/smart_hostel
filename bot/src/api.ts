@@ -81,7 +81,7 @@ function generateTimedMessage(duties: any, dateStr: string): string {
  */
 export function setupNotificationEndpoint(app: express.Application, bot: Telegraf<Context>) {
   // Endpoint to post today's duties to Telegram group
-  app.post('/api/notify/duties', async (req, res) => {
+  app.post('/api/notify/duties', async (req: express.Request, res: express.Response) => {
     try {
       console.log('[BOT] Received manual send request');
       
@@ -190,7 +190,7 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
   });
 
   // Health check
-  app.get('/health', (req, res) => {
+  app.get('/health', (req: express.Request, res: express.Response) => {
     res.json({ status: 'ok', service: 'telegram-bot' });
   });
 }

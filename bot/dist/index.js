@@ -15,6 +15,7 @@ const express_1 = __importDefault(require("express"));
 const commands_1 = require("./commands");
 const middleware_1 = require("./middleware");
 const api_1 = require("./api");
+const keepAlive_1 = require("./keepAlive");
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const BOT_PORT = parseInt(process.env.BOT_PORT || '3001');
 if (!BOT_TOKEN) {
@@ -31,7 +32,10 @@ app.use(express_1.default.json());
 (0, commands_1.setupCommands)(bot);
 // Setup notification endpoint
 (0, api_1.setupNotificationEndpoint)(app, bot);
-// No additional message handlers needed
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 // Start bot
 const startBot = async () => {
     try {
@@ -42,6 +46,11 @@ const startBot = async () => {
         // Start bot polling
         await bot.launch();
         console.log('✓ Telegram bot started');
+        // Start keep-alive for Render free tier
+        if (process.env.NODE_ENV === 'production') {
+            (0, keepAlive_1.startKeepAlive)();
+            console.log('✓ Keep-alive started');
+        }
         // Graceful shutdown
         process.once('SIGINT', () => bot.stop('SIGINT'));
         process.once('SIGTERM', () => bot.stop('SIGTERM'));
