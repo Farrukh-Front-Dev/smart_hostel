@@ -10,21 +10,21 @@ services:
         value: production
       - key: PORT
         value: 3003
-      - key: BACKEND_URL
-        fromService:
-          name: smart-hostel-backend-bot
-          property: host
-      - key: BOT_URL
-        fromService:
-          name: smart-hostel-backend-bot
-          property: host
+      - key: BOT_PORT
+        value: 3004
       - key: DATABASE_URL
+        sync: false
+      - key: BACKEND_URL
+        sync: false
+      - key: BOT_URL
+        sync: false
+      - key: BOT_API_URL
+        sync: false
+      - key: BACKEND_API_URL
         sync: false
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_DUTY_GROUP_ID
         sync: false
       - key: TELEGRAM_PAYMENT_GROUP_ID
-        sync: false
-      - key: BACKEND_API_URL
         sync: false
