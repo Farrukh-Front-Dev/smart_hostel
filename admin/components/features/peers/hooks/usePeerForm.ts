@@ -4,6 +4,8 @@ import { Peer, PeerFormData } from '../types';
 const initialFormData: PeerFormData = {
   username: '',
   floor: 1,
+  room: '',
+  fullName: '',
   note: '',
 };
 
@@ -25,6 +27,8 @@ export const usePeerForm = () => {
     setFormData({
       username: peer.username,
       floor: peer.floor,
+      room: peer.room || '',
+      fullName: peer.fullName || '',
       note: peer.note || '',
     });
   };
@@ -35,6 +39,8 @@ export const usePeerForm = () => {
     setFormData({
       username: peer.username,
       floor: peer.floor,
+      room: peer.room || '',
+      fullName: peer.fullName || '',
       note: peer.note || '',
     });
   };
@@ -45,6 +51,8 @@ export const usePeerForm = () => {
     setFormData({
       username: peer.username,
       floor: peer.floor,
+      room: peer.room || '',
+      fullName: peer.fullName || '',
       note: peer.note || '',
     });
   };

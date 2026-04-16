@@ -1,5 +1,6 @@
 import Modal from '@/components/common/Modal';
 import Button from '@/components/ui/Button';
+import { Language, getTranslation } from '@/lib/i18n';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -7,10 +8,7 @@ interface DeleteConfirmModalProps {
   isDeleting: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-  title?: string;
-  message?: string;
-  cancelLabel?: string;
-  deleteLabel?: string;
+  language: Language;
 }
 
 export default function DeleteConfirmModal({
@@ -19,18 +17,16 @@ export default function DeleteConfirmModal({
   isDeleting,
   onConfirm,
   onCancel,
-  title = "Peerni o'chirish",
-  message = "Siz {name} peerni o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi.",
-  cancelLabel = 'Bekor qilish',
-  deleteLabel = "O'chirish",
+  language,
 }: DeleteConfirmModalProps) {
-  const displayMessage = message.replace('{name}', peerName || '');
+  const t = (key: string) => getTranslation(language, key as any);
+  const displayMessage = t('deleteConfirmMessage').replace('{name}', peerName || '');
   
   return (
     <Modal
       isOpen={isOpen}
       onClose={onCancel}
-      title={title}
+      title={t('deleteConfirmTitle')}
       size="sm"
       variant="danger"
     >
@@ -46,7 +42,7 @@ export default function DeleteConfirmModal({
             className="flex-1"
             disabled={isDeleting}
           >
-            {cancelLabel}
+            {t('cancel')}
           </Button>
           <Button
             type="button"
@@ -55,7 +51,7 @@ export default function DeleteConfirmModal({
             className="flex-1"
             loading={isDeleting}
           >
-            {deleteLabel}
+            {t('delete')}
           </Button>
         </div>
       </div>

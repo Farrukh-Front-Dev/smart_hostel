@@ -5,10 +5,14 @@ export declare class StudentService {
     static createStudent(data: {
         username: string;
         floor: number;
+        room?: string;
+        fullName?: string;
         note?: string;
     }): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -23,6 +27,8 @@ export declare class StudentService {
     static getAllStudents(floor?: number): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -53,6 +59,8 @@ export declare class StudentService {
     } & {
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -67,10 +75,14 @@ export declare class StudentService {
     static updateStudent(id: number, data: Partial<{
         username: string;
         floor: number;
+        room: string;
+        fullName: string;
         note: string;
     }>): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -85,6 +97,8 @@ export declare class StudentService {
     static freezeStudent(id: number, reason: string): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -99,6 +113,8 @@ export declare class StudentService {
     static unfreezeStudent(id: number): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -113,6 +129,8 @@ export declare class StudentService {
     static deleteStudent(id: number): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;
@@ -127,6 +145,8 @@ export declare class StudentService {
     static getStudentsByFloor(floor: number): Promise<{
         username: string;
         floor: number;
+        room: string | null;
+        fullName: string | null;
         note: string | null;
         telegramId: string | null;
         isFrozen: boolean;

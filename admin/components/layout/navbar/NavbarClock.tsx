@@ -14,7 +14,7 @@ export default function NavbarClock() {
   }, []);
 
   return (
-    <div className="hidden sm:flex items-center gap-1.5 text-gray-900 dark:text-white font-bold text-xs sm:text-sm">
+    <div className="flex items-center gap-1.5 text-gray-900 dark:text-white font-bold text-xs sm:text-sm">
       <span className="text-xs">🕐</span>
       <span>{time}</span>
     </div>

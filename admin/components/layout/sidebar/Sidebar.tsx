@@ -4,7 +4,6 @@ import { Home, Users, Calendar, Settings } from 'lucide-react';
 import { getTranslation } from '../../../lib/i18n';
 import { useLanguage } from '../../../pages/_app';
 import { useSidebar } from '../../../lib/context/SidebarContext';
-import SidebarToggle from './SidebarToggle';
 import SidebarHeader from './SidebarHeader';
 import SidebarNavigation from './SidebarNavigation';
 import SidebarProfile from './SidebarProfile';
@@ -45,8 +44,20 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Toggle Button - Visible on all screens */}
-      <SidebarToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+      {/* Toggle Button - Visible when sidebar is closed */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed top-4 left-4 z-50 p-3 sm:p-4 bg-gradient-primary text-black dark:text-black rounded-2xl border-2 border-gray-900 shadow-3d hover:shadow-3d-lg hover:-translate-y-1 transition-all"
+          title="Sidebarni ochish"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      )}
 
       {/* Mobile Overlay */}
       {isOpen && (
@@ -63,7 +74,7 @@ export default function Sidebar() {
         } shadow-3d-lg`}
       >
         {/* Header */}
-        <SidebarHeader onClose={() => setIsOpen(false)} />
+        <SidebarHeader onClose={() => setIsOpen(false)} onToggle={() => setIsOpen(false)} isOpen={isOpen} />
 
         {/* Navigation */}
         <SidebarNavigation items={menuItems} onItemClick={handleMenuItemClick} />

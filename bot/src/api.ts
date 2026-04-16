@@ -1,6 +1,80 @@
 import express from 'express';
 import { Telegraf, Context } from 'telegraf';
 import axios from 'axios';
+import path from 'path';
+import fs from 'fs';
+
+/**
+ * Generate simple duty message format with user mentions (using School21 nick)
+ */
+function generateSimpleMessage(duties: any, dateStr: string): string {
+  let message = `📅 _${dateStr}_\n`;
+  message += `━━━━━━━━━\n`;
+
+  for (const floor in duties.byFloor) {
+    const students = duties.byFloor[floor];
+    const floorNum = parseInt(floor);
+    
+    message += `_${floorNum}-qavat:_\n`;
+    
+    if (students.length > 0) {
+      students.forEach((s: any) => {
+        // Always use username (School21 nick), with mention if telegramId exists
+        if (s.telegramId) {
+          message += `• [${s.username}](tg://user?id=${s.telegramId})\n`;
+        } else {
+          message += `• *${s.username}*\n`;
+        }
+      });
+    } else {
+      message += `• _INTENSIV_\n`;
+    }
+    message += `━━━━━━━━━\n`;
+  }
+
+  return message;
+}
+
+/**
+ * Generate timed duty message format (3 shifts per floor) with user mentions (using School21 nick)
+ */
+function generateTimedMessage(duties: any, dateStr: string): string {
+  let message = `📅 _${dateStr}_\n`;
+  message += `━━━━━━━━━\n`;
+
+  const shifts = [
+    { name: 'Tong', time: '10:00-15:00' },
+    { name: 'Kun', time: '15:00-20:00' },
+    { name: 'Kech', time: '23:00-04:00' }
+  ];
+
+  for (const floor in duties.byFloor) {
+    const students = duties.byFloor[floor];
+    const floorNum = parseInt(floor);
+    
+    message += `_${floorNum}-qavat_\n`;
+    
+    if (students.length > 0) {
+      // Distribute students across 3 shifts
+      for (let i = 0; i < shifts.length; i++) {
+        const student = students[i] || students[0];
+        message += `_${shifts[i].name}_ ${shifts[i].time}\n`;
+        
+        // Always use username (School21 nick), with mention if telegramId exists
+        if (student.telegramId) {
+          message += `[${student.username}](tg://user?id=${student.telegramId})\n`;
+        } else {
+          message += `*${student.username}*\n`;
+        }
+      }
+    } else {
+      message += `_INTENSIV_\n`;
+    }
+    message += `━━━━━━━━━\n`;
+  }
+
+  return message;
+}
 
 /**
  * Setup notification endpoint for backend to trigger bot actions
@@ -13,16 +87,16 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
       
       // Read environment variables at runtime
       const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:3000';
-      const TELEGRAM_GROUP_ID = process.env.TELEGRAM_GROUP_ID;
+      const TELEGRAM_DUTY_GROUP_ID = process.env.TELEGRAM_DUTY_GROUP_ID;
       
       console.log('[BOT] Using BACKEND_URL:', BACKEND_URL);
-      console.log('[BOT] Using TELEGRAM_GROUP_ID:', TELEGRAM_GROUP_ID);
+      console.log('[BOT] Using TELEGRAM_DUTY_GROUP_ID:', TELEGRAM_DUTY_GROUP_ID);
       
-      if (!TELEGRAM_GROUP_ID) {
-        console.error('[BOT] TELEGRAM_GROUP_ID not set');
+      if (!TELEGRAM_DUTY_GROUP_ID) {
+        console.error('[BOT] TELEGRAM_DUTY_GROUP_ID not set');
         return res.status(400).json({ 
           success: false,
-          error: 'TELEGRAM_GROUP_ID not configured. Please set it in bot/.env file' 
+          error: 'TELEGRAM_DUTY_GROUP_ID not configured. Please set it in bot/.env file' 
         });
       }
 
@@ -34,46 +108,63 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
 
       console.log('[BOT] Duties fetched:', duties);
 
-      // Format message in Russian and Uzbek
+      // Get message format setting
+      let messageFormat = 'simple';
+      try {
+        const formatResponse = await axios.get(`${BACKEND_URL}/api/settings/duty_message_format`);
+        messageFormat = formatResponse.data.value || 'simple';
+      } catch (error) {
+        console.log('[BOT] Using default format: simple');
+      }
+
+      // Get post with image setting
+      let postWithImage = true;
+      try {
+        const imageResponse = await axios.get(`${BACKEND_URL}/api/settings/post_with_image`);
+        postWithImage = imageResponse.data.value === 'true' || imageResponse.data.value === true;
+      } catch (error) {
+        console.log('[BOT] Using default: post with image');
+      }
+
       const today = new Date();
       const dateStr = today.toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: '2-digit',
         day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
       });
 
-      let message = `Дежурные по общежитию на ${dateStr} г.:\n\n`;
+      // Generate message based on format
+      const message = messageFormat === 'timed' 
+        ? generateTimedMessage(duties, dateStr)
+        : generateSimpleMessage(duties, dateStr);
 
-      for (const floor in duties.byFloor) {
-        const students = duties.byFloor[floor];
-        const floorNum = parseInt(floor);
-        if (students.length > 0) {
-          message += `${floorNum}-й этаж — ${students.map((s: any) => s.username || s.name).join(', ')}\n`;
-        } else {
-          message += `${floorNum}-й этаж — ИНТЕНСИВ\n`;
-        }
-      }
-
-      message += `\n╚══════╝\n\n`;
-      message += `${dateStr}y. kuni uchun yotoqxona navbatchilari:\n\n`;
-
-      for (const floor in duties.byFloor) {
-        const students = duties.byFloor[floor];
-        const floorNum = parseInt(floor);
-        if (students.length > 0) {
-          message += `${floorNum}-etaj — ${students.map((s: any) => s.username || s.name).join(', ')}\n`;
-        } else {
-          message += `${floorNum}-etaj — INTENSIV\n`;
-        }
-      }
-
-      console.log('[BOT] Sending message to Telegram group:', TELEGRAM_GROUP_ID);
+      console.log('[BOT] Sending message to Telegram group:', TELEGRAM_DUTY_GROUP_ID);
+      console.log('[BOT] Message format:', messageFormat);
+      console.log('[BOT] Post with image:', postWithImage);
       console.log('[BOT] Message:', message);
 
-      // Send to Telegram group
-      await bot.telegram.sendMessage(TELEGRAM_GROUP_ID, message);
-
-      console.log('[BOT] Message sent successfully');
+      // Path to the hostel image
+      const imagePath = path.join(__dirname, '..', 'school21Hostel.png');
+      
+      // Send based on postWithImage setting
+      if (postWithImage && fs.existsSync(imagePath)) {
+        console.log('[BOT] Sending photo with caption...');
+        // Send photo with caption to Telegram group (with Markdown parse mode)
+        await bot.telegram.sendPhoto(TELEGRAM_DUTY_GROUP_ID, {
+          source: imagePath
+        }, {
+          caption: message,
+          parse_mode: 'Markdown'
+        });
+        console.log('[BOT] Photo with message sent successfully');
+      } else {
+        console.log('[BOT] Sending text only...');
+        // Send text message only
+        await bot.telegram.sendMessage(TELEGRAM_DUTY_GROUP_ID, message, {
+          parse_mode: 'Markdown'
+        });
+        console.log('[BOT] Text message sent successfully');
+      }
 
       // Update duty status to posted
       try {
@@ -86,7 +177,7 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
         // Don't fail the whole request if status update fails
       }
 
-      res.json({ success: true, message: 'Duties posted to Telegram' });
+      res.json({ success: true, message: 'Duties posted to Telegram', format: messageFormat, withImage: postWithImage });
     } catch (error: any) {
       console.error('[BOT] Error posting duties:', error.message);
       console.error('[BOT] Error stack:', error.stack);
@@ -95,46 +186,6 @@ export function setupNotificationEndpoint(app: express.Application, bot: Telegra
         error: error.message,
         details: error.response?.data || 'Unknown error'
       });
-    }
-  });
-
-  // Create bot session
-  app.post('/api/bot/session', async (req, res) => {
-    try {
-      const { studentId, dutyDate } = req.body;
-
-      const response = await axios.post(`${BACKEND_URL}/api/bot/session`, {
-        studentId,
-        dutyDate,
-      });
-
-      res.json(response.data);
-    } catch (error: any) {
-      console.error('[BOT] Error creating session:', error.message);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Update bot session
-  app.patch('/api/bot/session/:sessionId', async (req, res) => {
-    try {
-      const { sessionId } = req.params;
-      const response = await axios.patch(`${BACKEND_URL}/api/bot/session/${sessionId}`, req.body);
-      res.json(response.data);
-    } catch (error: any) {
-      console.error('[BOT] Error updating session:', error.message);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Submit duty report
-  app.post('/api/bot/submit-report', async (req, res) => {
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/bot/submit-report`, req.body);
-      res.json(response.data);
-    } catch (error: any) {
-      console.error('[BOT] Error submitting report:', error.message);
-      res.status(500).json({ error: error.message });
     }
   });
 

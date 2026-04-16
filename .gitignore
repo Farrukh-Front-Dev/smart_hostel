@@ -15,9 +15,6 @@ node_modules/
 # Misc
 .DS_Store
 *.pem
-.env
-.env.local
-.env.*.local
 
 # Debug
 npm-debug.log*
@@ -35,6 +32,5 @@ yarn-error.log*
 Thumbs.db
 .DS_Store
 
-# Prisma
-prisma/dev.db
+# Prisma journal (temporary file)
 prisma/dev.db-journal

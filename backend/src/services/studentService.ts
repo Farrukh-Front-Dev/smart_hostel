@@ -9,6 +9,8 @@ export class StudentService {
   static async createStudent(data: {
     username: string;
     floor: number;
+    room?: string;
+    fullName?: string;
     note?: string;
   }) {
     const student = await prisma.student.create({
@@ -59,6 +61,8 @@ export class StudentService {
   static async updateStudent(id: number, data: Partial<{
     username: string;
     floor: number;
+    room: string;
+    fullName: string;
     note: string;
   }>) {
     return prisma.student.update({

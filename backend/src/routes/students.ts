@@ -30,7 +30,7 @@ router.get('/:id', async (req, res, next) => {
 // Create student
 router.post('/', async (req, res, next) => {
   try {
-    const { username, floor, note } = req.body;
+    const { username, floor, room, fullName, note } = req.body;
 
     if (!username || !floor) {
       return res.status(400).json({ error: 'Missing required fields: username, floor' });
@@ -39,6 +39,8 @@ router.post('/', async (req, res, next) => {
     const student = await StudentService.createStudent({
       username,
       floor: parseInt(floor),
+      room,
+      fullName,
       note,
     });
 

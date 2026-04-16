@@ -4,8 +4,9 @@ import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import studentRoutes from './routes/students';
 import dutyRoutes from './routes/duties';
-import reportRoutes from './routes/reports';
 import botRoutes from './routes/bot';
+import settingsRoutes from './routes/settings';
+import paymentRoutes from './routes/payments';
 import { initializeScheduler } from './cron/scheduler';
 
 dotenv.config();
@@ -21,8 +22,9 @@ app.use(express.json());
 // Routes
 app.use('/api/students', studentRoutes);
 app.use('/api/duties', dutyRoutes);
-app.use('/api/reports', reportRoutes);
 app.use('/api/bot', botRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

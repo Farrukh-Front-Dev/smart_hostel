@@ -1,6 +1,8 @@
 import { Edit2, Trash2, Snowflake, Sun, User } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import { Peer } from '../types';
+import { getTranslation } from '@/lib/i18n';
+import { useLanguage } from '@/pages/_app';
 
 interface PeersTableProps {
   peers: Peer[];
@@ -17,6 +19,9 @@ export default function PeersTable({
   onFreeze,
   onUnfreeze,
 }: PeersTableProps) {
+  const { language } = useLanguage();
+  const t = (key: any) => getTranslation(language, key as keyof typeof import('@/lib/i18n').translations.uz);
+  
   return (
     <div className="hidden lg:block bg-white dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl border-2 border-gray-900 shadow-3d-md overflow-hidden">
       <div className="overflow-x-auto">
@@ -24,11 +29,11 @@ export default function PeersTable({
           <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-900">
             <tr>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white w-12">#</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">Ism</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">Qavat</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">Holati</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">Izoh</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">Amallar</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">{t('usernameLabel' as any)}</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">{t('fullName' as any)}</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">{t('room' as any)}</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">{t('status' as any)}</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">{t('actions' as any)}</th>
             </tr>
           </thead>
           <tbody>
@@ -44,17 +49,18 @@ export default function PeersTable({
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <Badge variant="info">{peer.floor}-qavat</Badge>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{peer.fullName || '-'}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{peer.floor}-qavat</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{peer.room || '-'}</span>
                 </td>
                 <td className="px-6 py-4">
                   <Badge variant={peer.isFrozen ? 'error' : 'success'}>
-                    {peer.isFrozen ? 'Muzlatilgan' : 'Faol'}
+                    {peer.isFrozen ? t('frozen' as any) : t('active' as any)}
                   </Badge>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {peer.note || '-'}
-                  </span>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
@@ -65,7 +71,7 @@ export default function PeersTable({
                     >
                       <Edit2 size={18} />
                       <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        Tahrirlash
+                        {t('edit' as any)}
                       </span>
                     </button>
 
@@ -77,7 +83,7 @@ export default function PeersTable({
                       >
                         <Sun size={18} />
                         <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                          Faollashtirish
+                          {t('unfreeze' as any)}
                         </span>
                       </button>
                     ) : (
@@ -88,7 +94,7 @@ export default function PeersTable({
                       >
                         <Snowflake size={18} />
                         <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                          Muzlatish
+                          {t('freeze' as any)}
                         </span>
                       </button>
                     )}
@@ -100,7 +106,7 @@ export default function PeersTable({
                     >
                       <Trash2 size={18} />
                       <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        O'chirish
+                        {t('delete' as any)}
                       </span>
                     </button>
                   </div>

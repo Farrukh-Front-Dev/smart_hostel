@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
  * Duty generation algorithm:
  * - 3 active (non-frozen) peers per floor per day
  * - 4 floors total (12 total peers per day)
- * - Uses simple round-robin rotation through the list
- * - Cycles continuously: always selects the 3 peers who haven't been assigned most recently
+ * - Uses sequential circular rotation through the list
+ * - Day 1: Peers 1,2,3 -> Day 2: Peers 4,5,6 -> ... -> Day 10: Peers 28,29,30 -> Day 11: Peers 1,2,3 (wraps)
  * - Skips frozen peers automatically
  */
 export class DutyService {
@@ -63,8 +63,8 @@ export class DutyService {
   }
 
   /**
-   * Assign 3 students to a specific floor using round-robin rotation
-   * Cycles through active students continuously
+   * Assign 3 students to a specific floor using sequential circular rotation
+   * Cycles through the list sequentially: 1,2,3 -> 4,5,6 -> ... -> wraps around
    * Returns empty array if no students available (will show as INTENSIV)
    */
   private static async assignStudentsToFloor(floor: number, count: number) {
@@ -87,7 +87,7 @@ export class DutyService {
       return availableStudents;
     }
 
-    // Get rotation queue for these students
+    // Get rotation queue for these students to find the starting position
     const rotationQueues = await prisma.rotationQueue.findMany({
       where: {
         studentId: {
@@ -99,18 +99,29 @@ export class DutyService {
     // Create a map for quick lookup
     const queueMap = new Map(rotationQueues.map(q => [q.studentId, q]));
 
-    // Sort by last assigned date (oldest first = next in rotation)
-    const sorted = availableStudents.sort((a: any, b: any) => {
-      const queueA = queueMap.get(a.id);
-      const queueB = queueMap.get(b.id);
-      
-      const dateA = queueA?.lastAssignedDate?.getTime() || 0;
-      const dateB = queueB?.lastAssignedDate?.getTime() || 0;
-      return dateA - dateB;
-    });
+    // Find the student with the oldest lastAssignedDate to determine rotation position
+    let startIndex = 0;
+    let oldestDate = new Date().getTime();
 
-    // Select top 'count' students (those who haven't been assigned most recently)
-    const selected = sorted.slice(0, count);
+    for (let i = 0; i < availableStudents.length; i++) {
+      const queue = queueMap.get(availableStudents[i].id);
+      const assignedDate = queue?.lastAssignedDate?.getTime() || 0;
+      
+      if (assignedDate < oldestDate) {
+        oldestDate = assignedDate;
+        startIndex = i;
+      }
+    }
+
+    // Move to the next position in the circular list
+    startIndex = (startIndex + count) % availableStudents.length;
+
+    // Select 'count' students starting from startIndex, wrapping around if needed
+    const selected = [];
+    for (let i = 0; i < count; i++) {
+      const index = (startIndex + i) % availableStudents.length;
+      selected.push(availableStudents[index]);
+    }
 
     return selected;
   }

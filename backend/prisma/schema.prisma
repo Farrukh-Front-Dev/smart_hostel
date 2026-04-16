@@ -23,7 +23,9 @@ model Student {
   id        Int     @id @default(autoincrement())
   username  String  @unique
   floor     Int     // 1-4
-  note      String?
+  room      String? // Room number
+  fullName  String? // Full name
+  note      String? // Additional notes
   telegramId String? @unique
   isFrozen  Boolean @default(false)
   frozenReason String?
@@ -31,8 +33,7 @@ model Student {
   updatedAt DateTime @updatedAt
 
   duties    DutyStudent[]
-  reports   Report[]
-  botSessions BotSession[]
+  payments  Payment[]
 
   @@index([floor])
   @@index([isFrozen])
@@ -63,23 +64,6 @@ model DutyStudent {
   @@index([studentId])
 }
 
-model Report {
-  id        Int     @id @default(autoincrement())
-  studentId Int
-  dutyDate  DateTime
-  photoCount Int    @default(0)
-  status    String  @default("pending") // pending, approved, rejected
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@index([studentId])
-  @@index([dutyDate])
-  @@index([status])
-}
-
 model RotationQueue {
   id        Int     @id @default(autoincrement())
   studentId Int     @unique
@@ -93,21 +77,30 @@ model RotationQueue {
   @@index([priority])
 }
 
-model BotSession {
+model Settings {
   id        Int     @id @default(autoincrement())
-  studentId Int
-  dutyDate  DateTime
-  step      String  @default("nickname") // nickname, photos, confirmation
-  nickname  String?
-  photoCount Int    @default(0)
-  messageIds String? // JSON array of message IDs for cleanup
-  status    String  @default("active") // active, completed, cancelled
+  key       String  @unique
+  value     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  @@index([key])
+}
 
-  @@unique([studentId, dutyDate])
-  @@index([dutyDate])
+model Payment {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount      Float
+  month       String   // e.g., "2026-04" for April 2026
+  status      String   @default("pending") // pending, confirmed, rejected
+  imageUrl    String?  // Telegram file_id or URL
+  submittedAt DateTime @default(now())
+  reviewedAt  DateTime?
+  reviewedBy  String?  // Admin username
+  note        String?  // Additional notes
+  
+  @@index([studentId])
+  @@index([month])
   @@index([status])
 }

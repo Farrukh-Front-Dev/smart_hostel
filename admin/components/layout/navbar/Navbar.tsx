@@ -16,7 +16,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className={`fixed top-4 right-4 z-50 transition-all duration-300 ${
+    <header className={`fixed top-4 right-4 z-30 transition-all duration-300 ${
       isScrolled
         ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-xl'
         : 'bg-white/60 dark:bg-gray-900/60 backdrop-blur-lg shadow-md'

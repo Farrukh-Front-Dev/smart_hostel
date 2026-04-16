@@ -9,8 +9,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const client_1 = require("@prisma/client");
 const students_1 = __importDefault(require("./routes/students"));
 const duties_1 = __importDefault(require("./routes/duties"));
-const reports_1 = __importDefault(require("./routes/reports"));
 const bot_1 = __importDefault(require("./routes/bot"));
+const settings_1 = __importDefault(require("./routes/settings"));
+const payments_1 = __importDefault(require("./routes/payments"));
 const scheduler_1 = require("./cron/scheduler");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -22,8 +23,9 @@ app.use(express_1.default.json());
 // Routes
 app.use('/api/students', students_1.default);
 app.use('/api/duties', duties_1.default);
-app.use('/api/reports', reports_1.default);
 app.use('/api/bot', bot_1.default);
+app.use('/api/settings', settings_1.default);
+app.use('/api/payments', payments_1.default);
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });

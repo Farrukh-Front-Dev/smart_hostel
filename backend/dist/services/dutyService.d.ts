@@ -1,9 +1,10 @@
 /**
  * Duty generation algorithm:
- * - 3 students per floor per day
- * - 4 floors total
- * - Uses rotation queue to ensure fair distribution
- * - Skips frozen students
+ * - 3 active (non-frozen) peers per floor per day
+ * - 4 floors total (12 total peers per day)
+ * - Uses sequential circular rotation through the list
+ * - Day 1: Peers 1,2,3 -> Day 2: Peers 4,5,6 -> ... -> Day 10: Peers 28,29,30 -> Day 11: Peers 1,2,3 (wraps)
+ * - Skips frozen peers automatically
  */
 export declare class DutyService {
     /**
@@ -12,8 +13,9 @@ export declare class DutyService {
      */
     static generateDutiesForDate(date: Date): Promise<any>;
     /**
-     * Assign 3 students to a specific floor
-     * Uses rotation queue to ensure fair distribution
+     * Assign 3 students to a specific floor using sequential circular rotation
+     * Cycles through the list sequentially: 1,2,3 -> 4,5,6 -> ... -> wraps around
+     * Returns empty array if no students available (will show as INTENSIV)
      */
     private static assignStudentsToFloor;
     /**
@@ -21,7 +23,7 @@ export declare class DutyService {
      */
     static getDutiesForDate(date: Date): Promise<{
         id: number;
-        date: Date;
+        date: string;
         status: string;
         byFloor: Record<number, any[]>;
         allStudents: any[];

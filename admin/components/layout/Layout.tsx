@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="fixed inset-0 opacity-100 pointer-events-none z-0">
         <Squares
           direction="diagonal"
-          speed={0.2}
+          speed={0.1}
           borderColor="rgba(255, 255, 255, 0.05)"
           squareSize={60}
           hoverFillColor="rgba(255, 255, 255, 0.02)"

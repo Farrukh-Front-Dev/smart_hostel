@@ -5,10 +5,11 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 /**
  * Duty generation algorithm:
- * - 3 students per floor per day
- * - 4 floors total
- * - Uses rotation queue to ensure fair distribution
- * - Skips frozen students
+ * - 3 active (non-frozen) peers per floor per day
+ * - 4 floors total (12 total peers per day)
+ * - Uses sequential circular rotation through the list
+ * - Day 1: Peers 1,2,3 -> Day 2: Peers 4,5,6 -> ... -> Day 10: Peers 28,29,30 -> Day 11: Peers 1,2,3 (wraps)
+ * - Skips frozen peers automatically
  */
 class DutyService {
     /**
@@ -55,21 +56,28 @@ class DutyService {
         return duty;
     }
     /**
-     * Assign 3 students to a specific floor
-     * Uses rotation queue to ensure fair distribution
+     * Assign 3 students to a specific floor using sequential circular rotation
+     * Cycles through the list sequentially: 1,2,3 -> 4,5,6 -> ... -> wraps around
+     * Returns empty array if no students available (will show as INTENSIV)
      */
     static async assignStudentsToFloor(floor, count) {
-        // Get all non-frozen students on this floor
+        // Get all non-frozen students on this floor, sorted by ID for consistency
         const availableStudents = await prisma.student.findMany({
             where: {
                 floor: floor,
                 isFrozen: false,
             },
+            orderBy: { id: 'asc' },
         });
-        if (availableStudents.length < count) {
-            throw new Error(`Not enough available students on floor ${floor}`);
+        // If no students available, return empty array (will be marked as INTENSIV)
+        if (availableStudents.length === 0) {
+            return [];
         }
-        // Get rotation queue for these students
+        // If fewer students than needed, return all available
+        if (availableStudents.length < count) {
+            return availableStudents;
+        }
+        // Get rotation queue for these students to find the starting position
         const rotationQueues = await prisma.rotationQueue.findMany({
             where: {
                 studentId: {
@@ -79,29 +87,24 @@ class DutyService {
         });
         // Create a map for quick lookup
         const queueMap = new Map(rotationQueues.map(q => [q.studentId, q]));
-        // Sort by priority (lower = higher priority) and last assigned date
-        const sorted = availableStudents.sort((a, b) => {
-            const queueA = queueMap.get(a.id);
-            const queueB = queueMap.get(b.id);
-            const priorityDiff = (queueA?.priority || 0) - (queueB?.priority || 0);
-            if (priorityDiff !== 0)
-                return priorityDiff;
-            const dateA = queueA?.lastAssignedDate?.getTime() || 0;
-            const dateB = queueB?.lastAssignedDate?.getTime() || 0;
-            return dateA - dateB;
-        });
-        // Select top 'count' students
-        const selected = sorted.slice(0, count);
-        // Increment priority for non-selected students (they wait longer)
-        const nonSelected = sorted.slice(count);
-        for (const student of nonSelected) {
-            const queue = queueMap.get(student.id);
-            if (queue) {
-                await prisma.rotationQueue.update({
-                    where: { id: queue.id },
-                    data: { priority: (queue.priority || 0) + 1 },
-                });
+        // Find the student with the oldest lastAssignedDate to determine rotation position
+        let startIndex = 0;
+        let oldestDate = new Date().getTime();
+        for (let i = 0; i < availableStudents.length; i++) {
+            const queue = queueMap.get(availableStudents[i].id);
+            const assignedDate = queue?.lastAssignedDate?.getTime() || 0;
+            if (assignedDate < oldestDate) {
+                oldestDate = assignedDate;
+                startIndex = i;
             }
+        }
+        // Move to the next position in the circular list
+        startIndex = (startIndex + count) % availableStudents.length;
+        // Select 'count' students starting from startIndex, wrapping around if needed
+        const selected = [];
+        for (let i = 0; i < count; i++) {
+            const index = (startIndex + i) % availableStudents.length;
+            selected.push(availableStudents[index]);
         }
         return selected;
     }
@@ -132,7 +135,7 @@ class DutyService {
         });
         return {
             id: duty.id,
-            date: duty.date,
+            date: duty.date.toISOString().split('T')[0],
             status: duty.status,
             byFloor,
             allStudents: duty.students.map((ds) => ds.student),
@@ -168,7 +171,7 @@ class DutyService {
             });
             return {
                 id: duty.id,
-                date: duty.date,
+                date: duty.date.toISOString().split('T')[0],
                 status: duty.status,
                 byFloor,
                 allStudents: duty.students.map((ds) => ds.student),

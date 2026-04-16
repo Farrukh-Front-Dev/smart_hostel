@@ -83,14 +83,14 @@ export default function App({ Component, pageProps }: AppProps) {
     setIsLoading(false);
   }, []);
 
-  // Public pages (login page)
-  const publicPages = ['/login'];
+  // Public pages (login page and board)
+  const publicPages = ['/login', '/board'];
   const isPublicPage = publicPages.includes(router.pathname);
 
   // If not authenticated and not on public page, redirect to login
   useEffect(() => {
     if (!isLoading && !isAuthenticated && !isPublicPage) {
-      router.push('/login');
+      router.push('/board');
     }
   }, [isAuthenticated, isLoading, isPublicPage, router]);
 

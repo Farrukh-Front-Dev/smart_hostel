@@ -16,7 +16,7 @@ export default function StudentsFilters({
   onFloorChange,
   onAddClick,
 }: StudentsFiltersProps) {
-  const floorButtons = [
+  const floorButtons: Array<{ value: number | 'all'; label: string }> = [
     { value: 'all', label: 'Barcha qavatlar' },
     { value: 1, label: '1-qavat' },
     { value: 2, label: '2-qavat' },

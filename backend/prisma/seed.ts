@@ -1,20 +1,17 @@
 import { PrismaClient } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
-const USERNAMES_BY_FLOOR = {
-  1: ['jarrusha', 'albabeck', 'gemmachi', 'lirabelmaxterz', 'efiraralkinfyn', 'travelsadrimor'],
-  2: ['gladysjo', 'christib', 'lexamartyrion', 'kosvaldo', 'kybrelsamzter', 'dalvioquentisjarvick'],
-  3: ['oskarhar', 'skytejal', 'jayeland', 'blytherm', 'onzarilexon', 'triveranymphadal', 'vekorlix'],
-  4: ['visionti', 'spinneta', 'johnieer', 'elvinarkrestalfyn', 'lorzyndraquestor', 'lymorbrivian'],
-};
+// Load real student data from JSON file
+const studentsJsonPath = path.join(__dirname, '..', '..', 'students.json');
+const studentsData = JSON.parse(fs.readFileSync(studentsJsonPath, 'utf-8'));
 
 async function main() {
   console.log('🌱 Starting seed...');
 
   // Clear existing data
-  await prisma.botSession.deleteMany({});
-  await prisma.report.deleteMany({});
   await prisma.dutyStudent.deleteMany({});
   await prisma.duty.deleteMany({});
   await prisma.rotationQueue.deleteMany({});
@@ -27,7 +24,7 @@ async function main() {
   await prisma.user.create({
     data: {
       email: 'admin@smarthostel.com',
-      password: 'admin123', // In production, this should be hashed
+      password: 'admin123',
       name: 'Admin User',
       role: 'admin',
     },
@@ -35,22 +32,33 @@ async function main() {
 
   console.log('✓ Created default admin user (admin@smarthostel.com / admin123)');
 
+  // Create or update default settings
+  await prisma.settings.upsert({
+    where: { key: 'duty_message_format' },
+    update: { value: 'simple' },
+    create: {
+      key: 'duty_message_format',
+      value: 'simple',
+    },
+  });
+
+  console.log('✓ Created default settings');
+
   // Create students with provided usernames
   const students = [];
 
-  for (let floor = 1; floor <= 4; floor++) {
-    const floorUsernames = USERNAMES_BY_FLOOR[floor as keyof typeof USERNAMES_BY_FLOOR] || [];
-    
-    for (let i = 0; i < floorUsernames.length; i++) {
-      const username = floorUsernames[i];
-
+  // Floor 1 (qizlar)
+  if (studentsData['1']) {
+    for (const studentData of studentsData['1']) {
       const student = await prisma.student.create({
         data: {
-          username,
-          floor,
-          note: `Student on floor ${floor}`,
-          isFrozen: Math.random() < 0.1, // 10% frozen
-          frozenReason: Math.random() < 0.1 ? 'Medical leave' : null,
+          username: studentData.nickname,
+          floor: 1,
+          room: studentData.room,
+          fullName: studentData.name,
+          note: null,
+          telegramId: studentData.telegram_id ? studentData.telegram_id.toString() : null,
+          isFrozen: false,
         },
       });
 
@@ -60,7 +68,63 @@ async function main() {
       await prisma.rotationQueue.create({
         data: {
           studentId: student.id,
-          floor,
+          floor: 1,
+          priority: 0,
+        },
+      });
+    }
+  }
+
+  // Floor 3 (o'g'il bolalar)
+  if (studentsData['3']) {
+    for (const studentData of studentsData['3']) {
+      const student = await prisma.student.create({
+        data: {
+          username: studentData.nickname,
+          floor: 3,
+          room: studentData.room,
+          fullName: studentData.name,
+          note: null,
+          telegramId: studentData.telegram_id ? studentData.telegram_id.toString() : null,
+          isFrozen: false,
+        },
+      });
+
+      students.push(student);
+
+      // Create rotation queue entry
+      await prisma.rotationQueue.create({
+        data: {
+          studentId: student.id,
+          floor: 3,
+          priority: 0,
+        },
+      });
+    }
+  }
+
+  // Floor 4 (o'g'il bolalar)
+  if (studentsData['4']) {
+    for (const studentData of studentsData['4']) {
+      const student = await prisma.student.create({
+        data: {
+          username: studentData.nickname,
+          floor: 4,
+          room: studentData.room,
+          fullName: studentData.name,
+          note: null,
+          telegramId: studentData.telegram_id ? studentData.telegram_id.toString() : null,
+          isFrozen: false,
+        },
+      });
+
+      students.push(student);
+
+      // Create rotation queue entry
+      await prisma.rotationQueue.create({
+        data: {
+          studentId: student.id,
+          floor: 4,
           priority: 0,
         },
       });
@@ -83,8 +147,8 @@ async function main() {
       },
     });
 
-    // Assign 3 students per floor
-    for (let floor = 1; floor <= 4; floor++) {
+    // Assign 3 students per floor (only floors 1, 3, 4)
+    for (const floor of [1, 3, 4]) {
       const floorStudents = students.filter(
         (s) => s.floor === floor && !s.isFrozen
       );
@@ -107,26 +171,6 @@ async function main() {
   }
 
   console.log('✓ Generated duties for next 7 days');
-
-  // Create sample reports
-  for (let i = 0; i < 10; i++) {
-    const student = students[Math.floor(Math.random() * students.length)];
-    const reportDate = new Date(today);
-    reportDate.setDate(reportDate.getDate() - Math.floor(Math.random() * 5));
-
-    await prisma.report.create({
-      data: {
-        studentId: student.id,
-        dutyDate: reportDate,
-        photoCount: Math.floor(Math.random() * 5) + 3,
-        status: ['pending', 'approved', 'rejected'][
-          Math.floor(Math.random() * 3)
-        ],
-      },
-    });
-  }
-
-  console.log('✓ Created sample reports');
   console.log('✅ Seed completed successfully!');
 }
 

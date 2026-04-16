@@ -24,10 +24,15 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/duties": [
+    "/peers": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/duties.js"
+      "static/chunks/pages/peers.js"
+    ],
+    "/settings": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/settings.js"
     ]
   },
   "ampFirstPages": []

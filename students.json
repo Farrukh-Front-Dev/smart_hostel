@@ -1,0 +1,799 @@
+{
+  "1": [
+    {
+      "id": "2d67b231",
+      "name": "Fayzulloyeva Sevinch",
+      "room": "105",
+      "nickname": "paxterch",
+      "telegram_id": null
+    },
+    {
+      "id": "e04d89ff",
+      "name": "Rozimatova Ruxshona",
+      "room": "109",
+      "nickname": "trulajam",
+      "telegram_id": 1759392799
+    },
+    {
+      "id": "98aa2ba5",
+      "name": "Dagarova Solixa",
+      "room": "105",
+      "nickname": "drogolor",
+      "telegram_id": 7269259822
+    },
+    {
+      "id": "1f4adeb6",
+      "name": "Rahmatullayeva Shahzoda",
+      "room": "107",
+      "nickname": "eysendor",
+      "telegram_id": null
+    },
+    {
+      "id": "6ccd43df",
+      "name": "Ostanova Durdona",
+      "room": "113",
+      "nickname": "rosannpe",
+      "telegram_id": 827622887
+    },
+    {
+      "id": "4340ff65",
+      "name": "Asokulova Nasiba",
+      "room": "105",
+      "nickname": "luanamin",
+      "telegram_id": 5577847059
+    },
+    {
+      "id": "3fa75a1d",
+      "name": "Uktamova Jasmina",
+      "room": "105",
+      "nickname": "conniemi",
+      "telegram_id": 7915363075
+    },
+    {
+      "id": "0e1cc8d2",
+      "name": "Abdurazzakova Marvarid",
+      "room": "109",
+      "nickname": "tollettc",
+      "telegram_id": 7995760371
+    },
+    {
+      "id": "977bd6aa",
+      "name": "Jurakulova Xadichabonu",
+      "room": "105",
+      "nickname": "animusge",
+      "telegram_id": 7570179509
+    },
+    {
+      "id": "20495318",
+      "name": "Shamiyeva Ijobat",
+      "room": "111",
+      "nickname": "feijoabu",
+      "telegram_id": 7497246792
+    },
+    {
+      "id": "b3904fb6",
+      "name": "G'ofurova Dildora",
+      "room": "102",
+      "nickname": "waymarmo",
+      "telegram_id": 7016254593
+    },
+    {
+      "id": "9325d7b7",
+      "name": "Anvarova Mushtariybegim",
+      "room": "105",
+      "nickname": "wadeshad",
+      "telegram_id": 6837019114
+    },
+    {
+      "id": "520b2584",
+      "name": "Baxtiyorova Muharram",
+      "room": "113",
+      "nickname": "flanella",
+      "telegram_id": 7217042898
+    },
+    {
+      "id": "60702b91",
+      "name": "Kunuzoqova Marjona",
+      "room": "113",
+      "nickname": "mayhewem",
+      "telegram_id": 7424971244
+    },
+    {
+      "id": "3c01fc5b",
+      "name": "Turg'unova Zahro",
+      "room": "111",
+      "nickname": "jestwhis",
+      "telegram_id": 7351242859
+    },
+    {
+      "id": "b02810c1",
+      "name": "Xajiyeva Shahlo",
+      "room": "111",
+      "nickname": "tonymery",
+      "telegram_id": 5763665656
+    },
+    {
+      "id": "be3d84cc",
+      "name": "Baxtiyorova Muxlisa",
+      "room": "111",
+      "nickname": "branchlo",
+      "telegram_id": 6997903556
+    },
+    {
+      "id": "6845aedd",
+      "name": "Qodirova Hulkar",
+      "room": "111",
+      "nickname": "wynonaro",
+      "telegram_id": 6836163365
+    },
+    {
+      "id": "b9eebd16",
+      "name": "Mamatkarimova Umida",
+      "room": "110",
+      "nickname": "jarrusha",
+      "telegram_id": 7002479686
+    },
+    {
+      "id": "7aee246a",
+      "name": "Azamatova Aynur",
+      "room": "112",
+      "nickname": "albabeck",
+      "telegram_id": 8082349976
+    },
+    {
+      "id": "ddcc5d81",
+      "name": "Olimjonova Mohinur",
+      "room": "111",
+      "nickname": "gemmachi",
+      "telegram_id": 8491937944
+    },
+    {
+      "id": "310eeaf1",
+      "name": "Salimova Nargis",
+      "room": "101",
+      "nickname": "meteorsh",
+      "telegram_id": 8585868346
+    },
+    {
+      "id": "e59e9c84",
+      "name": "Murodova Farangiz",
+      "room": "101",
+      "nickname": "andriagu",
+      "telegram_id": 7553852688
+    },
+    {
+      "id": "a65c8b7a",
+      "name": "Toxirova Rayxona",
+      "room": "104",
+      "nickname": "aggaradr",
+      "telegram_id": 1683152968
+    },
+    {
+      "id": "23fd70f5",
+      "name": "Rustamova Mushtariy",
+      "room": "108",
+      "nickname": "genaroar",
+      "telegram_id": 6916394095
+    },
+    {
+      "id": "7a836b85",
+      "name": "Abduxalilova Maftuna",
+      "room": "109",
+      "nickname": "5367373994",
+      "telegram_id": null
+    },
+    {
+      "id": "9ef8ee41",
+      "name": "Gadayeva Go'zal",
+      "room": "109",
+      "nickname": "lavinaap",
+      "telegram_id": 5266500862
+    },
+    {
+      "id": "25cf2571",
+      "name": "Eshmadatova O'g'iloy",
+      "room": "101",
+      "nickname": "tamiabzo",
+      "telegram_id": 6752974839
+    },
+    {
+      "id": "b63b213a",
+      "name": "Xayrullayeva Gulsaman",
+      "room": "109",
+      "nickname": "catherna",
+      "telegram_id": 8278126057
+    },
+    {
+      "id": "e6681886",
+      "name": "Toshmuxammedova Soliha",
+      "room": "109",
+      "nickname": "tempiepe",
+      "telegram_id": 7524271215
+    },
+    {
+      "id": "db430cbf",
+      "name": "Zokirova Feruza",
+      "room": "109",
+      "nickname": "justinmo",
+      "telegram_id": 1857104071
+    }
+  ],
+  "3": [
+    {
+      "id": "d9de75d0",
+      "name": "Yulchiyev Umrzoq",
+      "room": "308",
+      "nickname": "zoltanma",
+      "telegram_id": 5580566610
+    },
+    {
+      "id": "fac73cae",
+      "name": "Zulponqulov Abbos",
+      "room": "306",
+      "nickname": "toaddela",
+      "telegram_id": 7612164908
+    },
+    {
+      "id": "af5d2209",
+      "name": "Rasulov Dilshod",
+      "room": "312",
+      "nickname": "garenmar",
+      "telegram_id": 405094235
+    },
+    {
+      "id": "dd9296db",
+      "name": "Tolipov Elmurodbek",
+      "room": "322",
+      "nickname": "wernergu",
+      "telegram_id": 6142166515
+    },
+    {
+      "id": "5fbfafac",
+      "name": "O'ktamov Sanjar",
+      "room": "?",
+      "nickname": "squealce",
+      "telegram_id": 7537966029
+    },
+    {
+      "id": "2f27002a",
+      "name": "Sunnatov Bekzod",
+      "room": "?",
+      "nickname": "susanneo",
+      "telegram_id": 8253113464
+    },
+    {
+      "id": "708ad78e",
+      "name": "Sultonboyev Sardor",
+      "room": "301",
+      "nickname": "aniviaha",
+      "telegram_id": 1328816095
+    },
+    {
+      "id": "4759720a",
+      "name": "Yoʻldoshev Abduxoliqjon",
+      "room": "319",
+      "nickname": "treasake",
+      "telegram_id": 7260309412
+    },
+    {
+      "id": "3ccb4b62",
+      "name": "Hayitov Jamshid",
+      "room": "318",
+      "nickname": "melvinro",
+      "telegram_id": 7810251723
+    },
+    {
+      "id": "b4916849",
+      "name": "Mirzakulov Abbosbbek",
+      "room": "304",
+      "nickname": "evenstas",
+      "telegram_id": 2120830043
+    },
+    {
+      "id": "58634c5e",
+      "name": "Islomov Sardorbek Hamroqul O'g'li",
+      "room": "?",
+      "nickname": "nicoldia",
+      "telegram_id": 7630571691
+    },
+    {
+      "id": "2916e53a",
+      "name": "Sadullayev Jasurbek",
+      "room": "303",
+      "nickname": "jaymiebe",
+      "telegram_id": 7191013839
+    },
+    {
+      "id": "d6d30972",
+      "name": "Sherqulov Shuxrat",
+      "room": "?",
+      "nickname": "kareemna",
+      "telegram_id": 8060378818
+    },
+    {
+      "id": "a49bf14d",
+      "name": "Николин Максим",
+      "room": "315",
+      "nickname": "daisymal",
+      "telegram_id": 153656092
+    },
+    {
+      "id": "093b7514",
+      "name": "Karimov Samandar",
+      "room": "310",
+      "nickname": "vincenzg",
+      "telegram_id": 5854875077
+    },
+    {
+      "id": "4e4fd858",
+      "name": "Shokirov Obidjon",
+      "room": "302",
+      "nickname": "prunesgl",
+      "telegram_id": 6675229893
+    },
+    {
+      "id": "5f163968",
+      "name": "Nematov Xushnudbek",
+      "room": "310",
+      "nickname": "kronatar",
+      "telegram_id": 6063356729
+    },
+    {
+      "id": "5bf9d012",
+      "name": "Qayumov Behruz",
+      "room": "304",
+      "nickname": "murkydel",
+      "telegram_id": 7537877031
+    },
+    {
+      "id": "aaf886ec",
+      "name": "Husanov Anvar",
+      "room": "303",
+      "nickname": "heikeecl",
+      "telegram_id": 768980638
+    },
+    {
+      "id": "4a4edf66",
+      "name": "Yorboboyev Sohib",
+      "room": "304",
+      "nickname": "cahallar",
+      "telegram_id": 7245304991
+    },
+    {
+      "id": "b93e3b67",
+      "name": "Olloberganov Gofur",
+      "room": "310",
+      "nickname": "eastmerl",
+      "telegram_id": 2143299139
+    },
+    {
+      "id": "45874ebf",
+      "name": "Salixov G'aybullojon",
+      "room": "317",
+      "nickname": "headgums",
+      "telegram_id": 8369720690
+    },
+    {
+      "id": "325ecc33",
+      "name": "Abduqayumov Alibek",
+      "room": "321",
+      "nickname": "orangele",
+      "telegram_id": null
+    },
+    {
+      "id": "8f116ade",
+      "name": "Kenjaev Hasan",
+      "room": "317",
+      "nickname": "darkstat",
+      "telegram_id": 724525157
+    },
+    {
+      "id": "0f6f303a",
+      "name": "Allaberganov Shaxzodbek",
+      "room": "311",
+      "nickname": "torvaldg",
+      "telegram_id": 1154414666
+    },
+    {
+      "id": "7107979d",
+      "name": "Salimov Ozodbek",
+      "room": "309",
+      "nickname": "scarygun",
+      "telegram_id": 7377275622
+    },
+    {
+      "id": "dd6b67db",
+      "name": "Ilgediyev Shaxzod",
+      "room": "305",
+      "nickname": "dortheys",
+      "telegram_id": 8191284595
+    },
+    {
+      "id": "d6eea251",
+      "name": "Karimov Abdulaziz",
+      "room": "311",
+      "nickname": "thattjun",
+      "telegram_id": 7402724867
+    },
+    {
+      "id": "778def57",
+      "name": "Haydarov Hayitmurod",
+      "room": "307",
+      "nickname": "tessiete",
+      "telegram_id": 5759121720
+    },
+    {
+      "id": "6519ef58",
+      "name": "Fayzullayev Avaz",
+      "room": "312",
+      "nickname": "andrewsh",
+      "telegram_id": 435033357
+    },
+    {
+      "id": "72030d8d",
+      "name": "Xubbimov Dilshodbek",
+      "room": "301",
+      "nickname": "quentinq",
+      "telegram_id": 2102107872
+    },
+    {
+      "id": "84ddd8ca",
+      "name": "Obidov Shuxrat",
+      "room": "314",
+      "nickname": "sherieme",
+      "telegram_id": 877853109
+    },
+    {
+      "id": "f7dc2da5",
+      "name": "Nurillayev Xurshid",
+      "room": "316",
+      "nickname": "jubileel",
+      "telegram_id": null
+    },
+    {
+      "id": "28ed7b70",
+      "name": "Saida'zamov Husan",
+      "room": "309",
+      "nickname": "oskarhar",
+      "telegram_id": 6496885703
+    },
+    {
+      "id": "76f95ad1",
+      "name": "Anorboyev Feruzbek",
+      "room": "308",
+      "nickname": "skytejal",
+      "telegram_id": 7894361779
+    },
+    {
+      "id": "d63b0535",
+      "name": "Ganiyev Alibek",
+      "room": "314",
+      "nickname": "jayeland",
+      "telegram_id": 578703943
+    },
+    {
+      "id": "5051e1d0",
+      "name": "Ismatullavey Eldor",
+      "room": "307",
+      "nickname": "mikaelah",
+      "telegram_id": 74016636
+    },
+    {
+      "id": "f77624ef",
+      "name": "Kadirov Habibjon",
+      "room": "301",
+      "nickname": "lanitoma",
+      "telegram_id": 2125471252
+    },
+    {
+      "id": "f202bf03",
+      "name": "Xotamov Yaxyoxon",
+      "room": "306",
+      "nickname": "shonnama",
+      "telegram_id": 7679790280
+    },
+    {
+      "id": "1e9df7af",
+      "name": "To'lanboyev Biloliddin",
+      "room": "316",
+      "nickname": "daniellh",
+      "telegram_id": 6852111597
+    }
+  ],
+  "4": [
+    {
+      "id": "54ff828a",
+      "name": "Raxmonov Kamronbek",
+      "room": "411",
+      "nickname": "shamanfl",
+      "telegram_id": 6912334515
+    },
+    {
+      "id": "a1d177aa",
+      "name": "Ruziev Komiljon",
+      "room": "422",
+      "nickname": "atricstu",
+      "telegram_id": 7701221737
+    },
+    {
+      "id": "8aa2f0c3",
+      "name": "Erkaboyev Bahodir",
+      "room": "419",
+      "nickname": "ethelgoo",
+      "telegram_id": 701231439
+    },
+    {
+      "id": "bbb14ee3",
+      "name": "Abdulloyev Safarali",
+      "room": "420",
+      "nickname": "phloxeun",
+      "telegram_id": 7437135093
+    },
+    {
+      "id": "a63b0504",
+      "name": "Mamatqulov Azizbek",
+      "room": "411",
+      "nickname": "grankary",
+      "telegram_id": 7771746193
+    },
+    {
+      "id": "6b4aeaa2",
+      "name": "To'laganov Shaxruzbek",
+      "room": "422",
+      "nickname": "dennacla",
+      "telegram_id": 6426673580
+    },
+    {
+      "id": "454480be",
+      "name": "Fayziyev Ziyodullo",
+      "room": "420",
+      "nickname": "bagshoto",
+      "telegram_id": 5864234648
+    },
+    {
+      "id": "4b41d3c9",
+      "name": "Asqarov Bexruz",
+      "room": "410",
+      "nickname": "jacosten",
+      "telegram_id": 6597457458
+    },
+    {
+      "id": "df771bb1",
+      "name": "Kazakov Abdumannon",
+      "room": "415",
+      "nickname": "profijos",
+      "telegram_id": 7694521638
+    },
+    {
+      "id": "703a3319",
+      "name": "Abdukoxorov Axadbek",
+      "room": "415",
+      "nickname": "benedarr",
+      "telegram_id": 1180021540
+    },
+    {
+      "id": "70924659",
+      "name": "Dadajonov Saidg'ani",
+      "room": "414",
+      "nickname": "urzenkoz",
+      "telegram_id": 611922291
+    },
+    {
+      "id": "18ffe3d4",
+      "name": "Aslonov Karomatullo",
+      "room": "413",
+      "nickname": "kaylenet",
+      "telegram_id": 5592428997
+    },
+    {
+      "id": "f63b1c61",
+      "name": "Rustamov Feruz",
+      "room": "417",
+      "nickname": "addiemaa",
+      "telegram_id": 8193237939
+    },
+    {
+      "id": "89355a49",
+      "name": "Mahmatqulov Muhammad",
+      "room": "412",
+      "nickname": "ashlieho",
+      "telegram_id": 6090193600
+    },
+    {
+      "id": "b5dab619",
+      "name": "Abdumajidov Temurbek",
+      "room": "413",
+      "nickname": "alveraca",
+      "telegram_id": 5354212468
+    },
+    {
+      "id": "36411afb",
+      "name": "Xoliqov Xusniddin",
+      "room": "417",
+      "nickname": "rickeybl",
+      "telegram_id": 7195460729
+    },
+    {
+      "id": "4a4dda91",
+      "name": "Ibroximov Akmaljon",
+      "room": "416",
+      "nickname": "tabithaz",
+      "telegram_id": 8282683933
+    },
+    {
+      "id": "b0d45bbb",
+      "name": "Olimjonov Adhambek",
+      "room": "414",
+      "nickname": "lydedavo",
+      "telegram_id": 7797235648
+    },
+    {
+      "id": "e694f354",
+      "name": "Davronov Jasurbek",
+      "room": "412",
+      "nickname": "shirelyr",
+      "telegram_id": 1274109468
+    },
+    {
+      "id": "7a0245c7",
+      "name": "Yaxshiboyev Shodiyor",
+      "room": "418",
+      "nickname": "yelenabe",
+      "telegram_id": 8295763857
+    },
+    {
+      "id": "0d294a29",
+      "name": "Omonov Hamidulloxon",
+      "room": "409",
+      "nickname": "visionti",
+      "telegram_id": 5310304728
+    },
+    {
+      "id": "ba616ca9",
+      "name": "Dilshod",
+      "room": "409",
+      "nickname": "hillaryj",
+      "telegram_id": null
+    },
+    {
+      "id": "a4db4153",
+      "name": "Axmedov Oybek",
+      "room": "408",
+      "nickname": "johnieer",
+      "telegram_id": 7944901102
+    },
+    {
+      "id": "5bb54252",
+      "name": "Panjiyev Asilbek",
+      "room": "403",
+      "nickname": "tortugab",
+      "telegram_id": 5069415484
+    },
+    {
+      "id": "95c889a6",
+      "name": "Yarashev Rashid",
+      "room": "408",
+      "nickname": "radishta",
+      "telegram_id": 7700873973
+    },
+    {
+      "id": "2104fc53",
+      "name": "Idiyev Bekzod",
+      "room": "402",
+      "nickname": "toyneden",
+      "telegram_id": 5678281376
+    },
+    {
+      "id": "e3146bdd",
+      "name": "Xalimov Jaloliddin",
+      "room": "402",
+      "nickname": "ruebensh",
+      "telegram_id": 6336111883
+    },
+    {
+      "id": "f9e7648f",
+      "name": "Ilmurodov Javlon",
+      "room": "407",
+      "nickname": "brandgri",
+      "telegram_id": 7490875962
+    },
+    {
+      "id": "06435267",
+      "name": "Jo'raqulov Bahodir",
+      "room": "405",
+      "nickname": "joeyandr",
+      "telegram_id": 6592168271
+    },
+    {
+      "id": "6e7ff22d",
+      "name": "Tursunov Boburbek",
+      "room": "403",
+      "nickname": "squealec",
+      "telegram_id": 1132606001
+    },
+    {
+      "id": "718c49f0",
+      "name": "Murodullayev Anvarbek",
+      "room": "404",
+      "nickname": "suggsshp",
+      "telegram_id": 1060254211
+    },
+    {
+      "id": "da4403b2",
+      "name": "Shukorov Jasurbek",
+      "room": "406",
+      "nickname": "machampk",
+      "telegram_id": 5195406258
+    },
+    {
+      "id": "d805d1e5",
+      "name": "Erkinov Samariddin",
+      "room": "418",
+      "nickname": "gladysjo",
+      "telegram_id": 7530714841
+    },
+    {
+      "id": "eba330d9",
+      "name": "Otajonov Javoxir",
+      "room": "401",
+      "nickname": "fornioco",
+      "telegram_id": 6016437284
+    },
+    {
+      "id": "2cc3f4f0",
+      "name": "Muftillayev Ruslan",
+      "room": "405",
+      "nickname": "howdedwy",
+      "telegram_id": 7694564437
+    },
+    {
+      "id": "eb2f1d6f",
+      "name": "Sunnatov Mustafo",
+      "room": "401",
+      "nickname": "brownbio",
+      "telegram_id": 1425584717
+    },
+    {
+      "id": "2903ccca",
+      "name": "Bozorov Ilhomjon",
+      "room": "404",
+      "nickname": "mooremal",
+      "telegram_id": 5481404306
+    },
+    {
+      "id": "a2809c02",
+      "name": "Murodullayev Shoxrux",
+      "room": "410",
+      "nickname": "runeshin",
+      "telegram_id": 7572863716
+    },
+    {
+      "id": "e1778803",
+      "name": "Oblaqulov Muhammad",
+      "room": "416",
+      "nickname": "jeaninel",
+      "telegram_id": 8545197824
+    },
+    {
+      "id": "277690ad",
+      "name": "Jumayev Farruxjon",
+      "room": "406",
+      "nickname": "rrangesi",
+      "telegram_id": 991729905
+    },
+    {
+      "id": "e617ff7c",
+      "name": "Jangabayev Sultanbek",
+      "room": "407",
+      "nickname": "reagantu",
+      "telegram_id": 5283912277
+    },
+    {
+      "id": "fdf59964",
+      "name": "Sharobidinov Abdulboriy",
+      "room": "419",
+      "nickname": "doriegyl",
+      "telegram_id": 7865315411
+    }
+  ]
+}

@@ -54,7 +54,7 @@ export default function StudentsModal({
             <>
               <div>
                 <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
-                  Talaba ismi
+                  Peer ismi
                 </label>
                 <div className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white font-medium text-base shadow-lg">
                   {username}
@@ -71,7 +71,7 @@ export default function StudentsModal({
                   className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg resize-none"
                   rows={4}
                   required
-                  placeholder="Nega bu talabani muzlatmoqchisiz? (masalan: Tulov qilmadi, Qoidani buzdi, va h.k.)"
+                  placeholder="Nega bu peerni muzlatmoqchisiz? (masalan: Tulov qilmadi, Qoidani buzdi, va h.k.)"
                 />
               </div>
             </>
@@ -88,7 +88,7 @@ export default function StudentsModal({
                   className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg"
                   required
                   autoFocus
-                  placeholder="Talaba ismini kiriting"
+                  placeholder="Peer ismini kiriting"
                 />
               </div>
 
@@ -123,7 +123,7 @@ export default function StudentsModal({
                   onChange={(e) => onNoteChange?.(e.target.value)}
                   className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg resize-none"
                   rows={3}
-                  placeholder="Talaba haqida izoh yozing (masalan: Yaxshi o'quvchi, Muammoli, va h.k.)"
+                  placeholder="Peer haqida izoh yozing (masalan: Yaxshi o'quvchi, Muammoli, va h.k.)"
                 />
               </div>
             </>

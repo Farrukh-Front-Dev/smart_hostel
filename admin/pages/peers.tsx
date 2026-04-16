@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getTranslation } from '../lib/i18n';
 import { useLanguage } from './_app';
 import { usePeers, usePeerForm, usePeerActions } from '../components/features/peers/hooks/index';
-import { Peer, FloorFilter } from '../components/features/peers/types/index';
+import { Peer, FloorFilter, StatusFilter } from '../components/features/peers/types/index';
 import {
   PeersHeader,
   PeersFilters,
@@ -36,6 +36,7 @@ export default function Peers() {
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [floorFilter, setFloorFilter] = useState<FloorFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [peerToDelete, setPeerToDelete] = useState<Peer | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -110,7 +111,11 @@ export default function Peers() {
   const filteredPeers = peers.filter((peer) => {
     const matchesSearch = peer.username.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFloor = floorFilter === 'all' || peer.floor === floorFilter;
-    return matchesSearch && matchesFloor;
+    const matchesStatus = 
+      statusFilter === null || 
+      (statusFilter === 'active' && !peer.isFrozen) ||
+      (statusFilter === 'frozen' && peer.isFrozen);
+    return matchesSearch && matchesFloor && matchesStatus;
   });
 
   if (loading) {
@@ -132,10 +137,10 @@ export default function Peers() {
         onSearchChange={(value: string) => setSearchQuery(value)}
         floorFilter={floorFilter}
         onFloorChange={(value: FloorFilter) => setFloorFilter(value)}
+        statusFilter={statusFilter}
+        onStatusChange={(value: StatusFilter) => setStatusFilter(value)}
         onAddClick={() => setShowModal(true)}
-        searchPlaceholder={t('search' as any)}
-        addButtonLabel={t('addStudent' as any)}
-        allFloorsLabel={t('allFloors' as any)}
+        language={language}
       />
 
       {/* Content */}
@@ -155,10 +160,11 @@ export default function Peers() {
             onDelete={handleDelete}
             onFreeze={handleFreeze}
             onUnfreeze={handleUnfreeze}
+            language={language}
           />
         </>
       ) : (
-        <PeersEmpty />
+        <PeersEmpty language={language} />
       )}
 
       {/* Modals */}
@@ -175,19 +181,29 @@ export default function Peers() {
         }
         username={formData.username}
         floor={formData.floor}
+        room={formData.room}
+        fullName={formData.fullName}
         note={formData.note}
         onUsernameChange={(value: string) => setFormData({ ...formData, username: value })}
         onFloorChange={(value: number) => setFormData({ ...formData, floor: value })}
+        onRoomChange={(value: string) => setFormData({ ...formData, room: value })}
+        onFullNameChange={(value: string) => setFormData({ ...formData, fullName: value })}
         onNoteChange={(value: string) => setFormData({ ...formData, note: value })}
         onSubmit={handleSubmit}
         onClose={handleCloseModal}
-        usernameLabel={t('username' as any)}
+        usernameLabel={t('usernameLabel' as any)}
         floorLabel={t('floor' as any)}
-        noteLabel={shouldFreezeAfterSave ? t('freezeReason' as any) : t('freezeReason' as any)}
-        usernamePlaceholder={t('username' as any)}
-        notePlaceholder={shouldFreezeAfterSave ? t('freezeReason' as any) : t('freezeReason' as any)}
+        noteLabel={t('note' as any)}
+        fullNameLabel={t('fullName' as any)}
+        roomLabel={t('room' as any)}
+        usernamePlaceholder={t('usernamePlaceholder' as any)}
+        notePlaceholder={t('notePlaceholder' as any)}
+        fullNamePlaceholder={t('fullNamePlaceholder' as any)}
+        roomPlaceholder={t('roomPlaceholder' as any)}
         cancelLabel={t('cancel' as any)}
-        saveLabel={shouldFreezeAfterSave || shouldUnfreezeAfterSave ? t('save' as any) : t('save' as any)}
+        saveLabel={t('save' as any)}
+        isFreezingMode={shouldFreezeAfterSave}
+        isUnfreezingMode={shouldUnfreezeAfterSave}
       />
 
       <DeleteConfirmModal
@@ -199,10 +215,7 @@ export default function Peers() {
           setDeleteConfirmOpen(false);
           setPeerToDelete(null);
         }}
-        title={t('deleteConfirmTitle' as any)}
-        message={t('deleteConfirmMessage' as any)}
-        cancelLabel={t('cancel' as any)}
-        deleteLabel={t('deleteButtonLabel' as any)}
+        language={language}
       />
     </div>
   );

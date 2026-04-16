@@ -6,19 +6,29 @@ interface PeersModalProps {
   title: string;
   username: string;
   floor: number;
+  room?: string;
+  fullName?: string;
   note?: string;
   onUsernameChange: (value: string) => void;
   onFloorChange: (value: number) => void;
+  onRoomChange?: (value: string) => void;
+  onFullNameChange?: (value: string) => void;
   onNoteChange?: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onClose: () => void;
   usernameLabel?: string;
   floorLabel?: string;
   noteLabel?: string;
+  fullNameLabel?: string;
+  roomLabel?: string;
   usernamePlaceholder?: string;
   notePlaceholder?: string;
+  fullNamePlaceholder?: string;
+  roomPlaceholder?: string;
   cancelLabel?: string;
   saveLabel?: string;
+  isFreezingMode?: boolean;
+  isUnfreezingMode?: boolean;
 }
 
 export default function PeersModal({
@@ -26,21 +36,33 @@ export default function PeersModal({
   title,
   username,
   floor,
+  room = '',
+  fullName = '',
   note = '',
   onUsernameChange,
   onFloorChange,
+  onRoomChange,
+  onFullNameChange,
   onNoteChange,
   onSubmit,
   onClose,
-  usernameLabel = 'Ism',
+  usernameLabel = 'Username',
   floorLabel = 'Qavat',
   noteLabel = 'Izoh (ixtiyoriy)',
-  usernamePlaceholder = 'Peer ismini kiriting',
-  notePlaceholder = 'Peer haqida izoh yozing (masalan: Yaxshi o\'quvchi, Muammoli, va h.k.)',
+  fullNameLabel = 'To\'liq ism',
+  roomLabel = 'Xona',
+  usernamePlaceholder = 'Username kiriting',
+  notePlaceholder = 'Izoh yozing',
+  fullNamePlaceholder = 'To\'liq ismni kiriting',
+  roomPlaceholder = 'Xona raqamini kiriting',
   cancelLabel = 'Bekor qilish',
   saveLabel = 'Saqlash',
+  isFreezingMode = false,
+  isUnfreezingMode = false,
 }: PeersModalProps) {
   if (!isOpen) return null;
+
+  const isReadOnlyMode = isFreezingMode || isUnfreezingMode;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
@@ -66,9 +88,12 @@ export default function PeersModal({
               type="text"
               value={username}
               onChange={(e) => onUsernameChange(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg"
+              disabled={isReadOnlyMode}
+              className={`w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg ${
+                isReadOnlyMode ? 'opacity-60 cursor-not-allowed' : ''
+              }`}
               required
-              autoFocus
+              autoFocus={!isReadOnlyMode}
               placeholder={usernamePlaceholder}
             />
           </div>
@@ -82,12 +107,13 @@ export default function PeersModal({
                 <button
                   key={floorNum}
                   type="button"
-                  onClick={() => onFloorChange(floorNum)}
+                  onClick={() => !isReadOnlyMode && onFloorChange(floorNum)}
+                  disabled={isReadOnlyMode}
                   className={`flex-1 min-w-[80px] px-4 py-3 rounded-xl font-medium border-2 transition-all ${
                     floor === floorNum
                       ? 'bg-gradient-primary text-black dark:text-black border-gray-900 shadow-3d-md'
                       : 'bg-white/20 dark:bg-white/10 border-white/30 dark:border-white/20 text-gray-900 dark:text-white hover:bg-white/30 dark:hover:bg-white/20'
-                  }`}
+                  } ${isReadOnlyMode ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                   {floorNum}-qavat
                 </button>
@@ -95,18 +121,67 @@ export default function PeersModal({
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
-              {noteLabel}
-            </label>
-            <textarea
-              value={note}
-              onChange={(e) => onNoteChange?.(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg resize-none"
-              rows={3}
-              placeholder={notePlaceholder}
-            />
-          </div>
+          {/* Freeze reason - only in freezing mode */}
+          {isFreezingMode && (
+            <div>
+              <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
+                Muzlatish sababi
+              </label>
+              <textarea
+                value={note || ''}
+                onChange={(e) => onNoteChange?.(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg resize-none"
+                rows={3}
+                placeholder="Muzlatish sababini kiriting"
+                autoFocus
+                required
+              />
+            </div>
+          )}
+
+          {/* Show full name and room fields only in non-freezing mode */}
+          {!isFreezingMode && !isUnfreezingMode && (
+            <>
+              <div>
+                <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
+                  {fullNameLabel}
+                </label>
+                <input
+                  type="text"
+                  value={fullName || ''}
+                  onChange={(e) => onFullNameChange?.(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg"
+                  placeholder={fullNamePlaceholder}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
+                  {roomLabel}
+                </label>
+                <input
+                  type="text"
+                  value={room || ''}
+                  onChange={(e) => onRoomChange?.(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg"
+                  placeholder={roomPlaceholder}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
+                  {noteLabel}
+                </label>
+                <textarea
+                  value={note || ''}
+                  onChange={(e) => onNoteChange?.(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-white/30 dark:border-white/20 rounded-xl bg-white/20 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-600 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-cyan focus:outline-none transition-all font-medium text-base shadow-lg resize-none"
+                  rows={2}
+                  placeholder={notePlaceholder}
+                />
+              </div>
+            </>
+          )}
 
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button

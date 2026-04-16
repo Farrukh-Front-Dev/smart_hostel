@@ -1,86 +1,28 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupCommands = setupCommands;
-const axios_1 = __importDefault(require("axios"));
-const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:3000';
+const commandHandlers_1 = require("./handlers/commandHandlers");
+const callbackHandlers_1 = require("./handlers/callbackHandlers");
+const messageHandlers_1 = require("./handlers/messageHandlers");
 /**
- * Setup bot commands
+ * Setup all bot commands and handlers
+ * Clean architecture with separation of concerns
  */
 function setupCommands(bot) {
-    // /start command
-    bot.start((ctx) => {
-        ctx.reply(`👋 Welcome to SmartHostel Bot!\n\n` +
-            `Available commands:\n` +
-            `/today - View today's duty assignments\n` +
-            `/tomorrow - View tomorrow's duty assignments\n` +
-            `/report - Submit a duty completion report\n` +
-            `/help - Show this message`);
-    });
-    // /help command
-    bot.help((ctx) => {
-        ctx.reply(`📋 SmartHostel Commands:\n\n` +
-            `/today - View today's duty assignments\n` +
-            `/tomorrow - View tomorrow's duty assignments\n` +
-            `/report - Submit a duty completion report\n` +
-            `/help - Show this message\n\n` +
-            `💡 Tip: Send a photo with caption to submit a duty report`);
-    });
-    // /today command
-    bot.command('today', async (ctx) => {
-        try {
-            const response = await axios_1.default.get(`${BACKEND_URL}/api/duties/today`);
-            const duties = response.data;
-            let message = `📅 Today's Duty Assignments\n\n`;
-            for (const floor in duties.byFloor) {
-                const students = duties.byFloor[floor];
-                if (students.length > 0) {
-                    message += `🏢 Floor ${floor}:\n`;
-                    students.forEach((student) => {
-                        message += `  • ${student.name} (${student.rollNo})\n`;
-                    });
-                    message += '\n';
-                }
-            }
-            await ctx.reply(message);
-        }
-        catch (error) {
-            console.error('[BOT] Error fetching today duties:', error.message);
-            await ctx.reply('❌ Could not fetch today\'s duties. Please try again later.');
-        }
-    });
-    // /tomorrow command
-    bot.command('tomorrow', async (ctx) => {
-        try {
-            const response = await axios_1.default.get(`${BACKEND_URL}/api/duties/tomorrow`);
-            const duties = response.data;
-            let message = `📅 Tomorrow's Duty Assignments\n\n`;
-            for (const floor in duties.byFloor) {
-                const students = duties.byFloor[floor];
-                if (students.length > 0) {
-                    message += `🏢 Floor ${floor}:\n`;
-                    students.forEach((student) => {
-                        message += `  • ${student.name} (${student.rollNo})\n`;
-                    });
-                    message += '\n';
-                }
-            }
-            await ctx.reply(message);
-        }
-        catch (error) {
-            console.error('[BOT] Error fetching tomorrow duties:', error.message);
-            await ctx.reply('❌ Could not fetch tomorrow\'s duties. Please try again later.');
-        }
-    });
-    // /report command
-    bot.command('report', async (ctx) => {
-        await ctx.reply(`📸 To submit a duty report:\n\n` +
-            `1. Take a photo of your completed duty\n` +
-            `2. Send the photo to this bot\n` +
-            `3. Add a caption with any notes (optional)\n\n` +
-            `Example caption: "Floor 2 cleaning completed"`);
-    });
+    // Command handlers
+    bot.start((ctx) => commandHandlers_1.CommandHandlers.handleStart(ctx));
+    bot.help((ctx) => commandHandlers_1.CommandHandlers.handleHelp(ctx));
+    bot.command('oplata', (ctx) => commandHandlers_1.CommandHandlers.handleOplata(ctx));
+    bot.command('cancel', (ctx) => commandHandlers_1.CommandHandlers.handleCancel(ctx));
+    bot.command('today', (ctx) => commandHandlers_1.CommandHandlers.handleToday(ctx));
+    bot.command('tomorrow', (ctx) => commandHandlers_1.CommandHandlers.handleTomorrow(ctx));
+    bot.command('groupid', (ctx) => commandHandlers_1.CommandHandlers.handleGroupId(ctx));
+    bot.command('invite', (ctx) => commandHandlers_1.CommandHandlers.handleInvite(ctx));
+    // Callback query handler (inline buttons)
+    bot.on('callback_query', (ctx) => callbackHandlers_1.CallbackHandlers.handleCallback(ctx, bot));
+    // Message handlers
+    bot.on('text', (ctx) => messageHandlers_1.MessageHandlers.handleText(ctx));
+    bot.on('photo', (ctx) => messageHandlers_1.MessageHandlers.handlePhoto(ctx, bot));
+    bot.on('document', (ctx) => messageHandlers_1.MessageHandlers.handleDocument(ctx, bot));
 }
 //# sourceMappingURL=commands.js.map

@@ -4,21 +4,15 @@ import path from 'path';
 // Load environment variables from .env file
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// Debug: Log if TELEGRAM_GROUP_ID is loaded
-console.log('[BOT] TELEGRAM_GROUP_ID:', process.env.TELEGRAM_GROUP_ID);
+// Debug: Log group IDs
+console.log('[BOT] TELEGRAM_DUTY_GROUP_ID:', process.env.TELEGRAM_DUTY_GROUP_ID);
+console.log('[BOT] TELEGRAM_PAYMENT_GROUP_ID:', process.env.TELEGRAM_PAYMENT_GROUP_ID);
 
 import { Telegraf, Context } from 'telegraf';
 import express from 'express';
 import { setupCommands } from './commands';
 import { setupMiddleware } from './middleware';
 import { setupNotificationEndpoint } from './api';
-import {
-  startDutyWorkflow,
-  handleNicknameInput,
-  handlePhotoUpload,
-  handleConfirmation,
-  getActiveSession,
-} from './dutyWorkflow';
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const BOT_PORT = parseInt(process.env.BOT_PORT || '3001');
@@ -43,50 +37,7 @@ setupCommands(bot);
 // Setup notification endpoint
 setupNotificationEndpoint(app, bot);
 
-// Handle text messages (nickname input, confirmation)
-bot.on('text', async (ctx) => {
-  try {
-    const userId = ctx.from?.id;
-    if (!userId) return;
-
-    const session = getActiveSession(userId);
-    const text = ctx.message.text;
-
-    if (session?.step === 'nickname') {
-      await handleNicknameInput(ctx, text);
-    } else if (session?.step === 'confirmation') {
-      await handleConfirmation(ctx, text);
-    } else {
-      // Default response
-      await ctx.reply(
-        `👋 Hello! Use /start to begin or /help for available commands.`
-      );
-    }
-  } catch (error) {
-    console.error('[BOT] Error handling text:', error);
-  }
-});
-
-// Handle photo uploads (duty reports)
-bot.on('photo', async (ctx) => {
-  try {
-    const userId = ctx.from?.id;
-    if (!userId) return;
-
-    const session = getActiveSession(userId);
-
-    if (session?.step === 'photos') {
-      await handlePhotoUpload(ctx);
-    } else {
-      await ctx.reply(
-        `📸 To submit a duty report, use /start to begin the duty workflow.`
-      );
-    }
-  } catch (error) {
-    console.error('[BOT] Error handling photo:', error);
-    await ctx.reply('❌ Error processing photo. Please try again.');
-  }
-});
+// No additional message handlers needed
 
 // Start bot
 const startBot = async () => {
