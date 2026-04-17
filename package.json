@@ -13,6 +13,7 @@
     "build": "npm run build -w backend && npm run build -w bot && npm run build -w admin",
     "start": "concurrently \"npm start -w backend\" \"npm start -w bot\"",
     "bot:start": "npm start -w bot",
+    "bot:build-start": "npm run build -w bot && npm start -w bot",
     "admin:start": "npm start -w admin",
     "db:migrate": "npm run db:migrate -w backend",
     "db:seed": "npm run db:seed -w backend"

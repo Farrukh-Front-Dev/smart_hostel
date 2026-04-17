@@ -6,14 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const path_1 = __importDefault(require("path"));
 const client_1 = require("@prisma/client");
 const students_1 = __importDefault(require("./routes/students"));
 const duties_1 = __importDefault(require("./routes/duties"));
 const bot_1 = __importDefault(require("./routes/bot"));
 const settings_1 = __importDefault(require("./routes/settings"));
 const payments_1 = __importDefault(require("./routes/payments"));
+const status_1 = __importDefault(require("./routes/status"));
 const scheduler_1 = require("./cron/scheduler");
-dotenv_1.default.config();
+const keepAlive_1 = require("./keepAlive");
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../../.env') });
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +29,7 @@ app.use('/api/duties', duties_1.default);
 app.use('/api/bot', bot_1.default);
 app.use('/api/settings', settings_1.default);
 app.use('/api/payments', payments_1.default);
+app.use('/api/status', status_1.default);
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -47,6 +51,11 @@ const startServer = async () => {
         // Initialize scheduler
         (0, scheduler_1.initializeScheduler)();
         console.log('✓ Scheduler initialized');
+        // Start keep-alive for Render free tier
+        if (process.env.NODE_ENV === 'production') {
+            (0, keepAlive_1.startKeepAlive)();
+            console.log('✓ Keep-alive started');
+        }
         app.listen(PORT, () => {
             console.log(`✓ Server running on http://localhost:${PORT}`);
         });
