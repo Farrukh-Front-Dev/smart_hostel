@@ -64,7 +64,16 @@ const startBot = async () => {
     // Graceful shutdown
     process.once('SIGINT', () => bot.stop('SIGINT'));
     process.once('SIGTERM', () => bot.stop('SIGTERM'));
-  } catch (error) {
+  } catch (error: any) {
+    const isPollingConflict =
+      error?.response?.error_code === 409 ||
+      String(error?.message || '').includes('409: Conflict');
+
+    if (isPollingConflict) {
+      console.warn('[BOT] Polling conflict detected. API server is still running; Telegram polling was skipped.');
+      return;
+    }
+
     console.error('Failed to start bot:', error);
     process.exit(1);
   }
