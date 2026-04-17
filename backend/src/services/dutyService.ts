@@ -96,8 +96,11 @@ export class DutyService {
       },
     });
 
-    // Create a map for quick lookup
-    const queueMap = new Map(rotationQueues.map(q => [q.studentId, q]));
+    // Keep explicit Map typing so stricter TS inference doesn't collapse values to unknown
+    const queueMap = new Map<number, (typeof rotationQueues)[number]>();
+    rotationQueues.forEach((queue) => {
+      queueMap.set(queue.studentId, queue);
+    });
 
     // Find the student with the oldest lastAssignedDate to determine rotation position
     let startIndex = 0;
