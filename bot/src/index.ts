@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from root .env file
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Load environment variables from bot .env file
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Debug: Log group IDs
 console.log('[BOT] TELEGRAM_DUTY_GROUP_ID:', process.env.TELEGRAM_DUTY_GROUP_ID);

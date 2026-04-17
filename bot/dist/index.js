@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
-// Load environment variables from root .env file
-dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../../.env') });
+// Load environment variables from bot .env file
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
 // Debug: Log group IDs
 console.log('[BOT] TELEGRAM_DUTY_GROUP_ID:', process.env.TELEGRAM_DUTY_GROUP_ID);
 console.log('[BOT] TELEGRAM_PAYMENT_GROUP_ID:', process.env.TELEGRAM_PAYMENT_GROUP_ID);
