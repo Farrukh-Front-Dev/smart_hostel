@@ -57,7 +57,9 @@ async function main() {
           room: studentData.room,
           fullName: studentData.name,
           note: null,
-          telegramId: studentData.telegram_id ? studentData.telegram_id.toString() : null,
+          ...(studentData.telegram_id
+            ? { telegramId: studentData.telegram_id.toString() }
+            : {}),
           isFrozen: false,
         },
       });
@@ -85,7 +87,9 @@ async function main() {
           room: studentData.room,
           fullName: studentData.name,
           note: null,
-          telegramId: studentData.telegram_id ? studentData.telegram_id.toString() : null,
+          ...(studentData.telegram_id
+            ? { telegramId: studentData.telegram_id.toString() }
+            : {}),
           isFrozen: false,
         },
       });
@@ -113,7 +117,9 @@ async function main() {
           room: studentData.room,
           fullName: studentData.name,
           note: null,
-          telegramId: studentData.telegram_id ? studentData.telegram_id.toString() : null,
+          ...(studentData.telegram_id
+            ? { telegramId: studentData.telegram_id.toString() }
+            : {}),
           isFrozen: false,
         },
       });

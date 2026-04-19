@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { requireObjectId } from '../utils/objectId';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
     const where: any = {};
     if (status) where.status = status;
     if (month) where.month = month;
-    if (studentId) where.studentId = parseInt(studentId as string);
+    if (studentId) where.studentId = requireObjectId(studentId, 'studentId');
 
     const payments = await prisma.payment.findMany({
       where,
@@ -35,7 +36,7 @@ router.get('/', async (req, res) => {
     res.json(payments);
   } catch (error: any) {
     console.error('Error fetching payments:', error);
-    res.status(500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message });
   }
 });
 
@@ -45,7 +46,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     
     const payment = await prisma.payment.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: requireObjectId(id) },
       include: {
         student: {
           select: {
@@ -66,7 +67,7 @@ router.get('/:id', async (req, res) => {
     res.json(payment);
   } catch (error: any) {
     console.error('Error fetching payment:', error);
-    res.status(500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message });
   }
 });
 
@@ -81,7 +82,7 @@ router.post('/', async (req, res) => {
 
     const payment = await prisma.payment.create({
       data: {
-        studentId: parseInt(studentId),
+        studentId: requireObjectId(studentId, 'studentId'),
         amount: parseFloat(amount) || 0,
         month,
         imageUrl,
@@ -104,7 +105,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(payment);
   } catch (error: any) {
     console.error('Error creating payment:', error);
-    res.status(500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message });
   }
 });
 
@@ -119,7 +120,7 @@ router.patch('/:id/status', async (req, res) => {
     }
 
     const payment = await prisma.payment.update({
-      where: { id: parseInt(id) },
+      where: { id: requireObjectId(id) },
       data: {
         status,
         reviewedAt: new Date(),
@@ -142,7 +143,7 @@ router.patch('/:id/status', async (req, res) => {
     res.json(payment);
   } catch (error: any) {
     console.error('Error updating payment status:', error);
-    res.status(500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message });
   }
 });
 
@@ -152,13 +153,13 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     await prisma.payment.delete({
-      where: { id: parseInt(id) }
+      where: { id: requireObjectId(id) }
     });
 
     res.json({ success: true });
   } catch (error: any) {
     console.error('Error deleting payment:', error);
-    res.status(500).json({ error: error.message });
+    res.status(error.status || 500).json({ error: error.message });
   }
 });
 

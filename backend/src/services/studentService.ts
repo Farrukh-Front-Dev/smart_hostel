@@ -42,7 +42,7 @@ export class StudentService {
   /**
    * Get student by ID
    */
-  static async getStudentById(id: number) {
+  static async getStudentById(id: string) {
     return prisma.student.findUnique({
       where: { id },
       include: {
@@ -58,7 +58,7 @@ export class StudentService {
   /**
    * Update student
    */
-  static async updateStudent(id: number, data: Partial<{
+  static async updateStudent(id: string, data: Partial<{
     username: string;
     floor: number;
     room: string;
@@ -74,7 +74,7 @@ export class StudentService {
   /**
    * Freeze student (mark as unavailable)
    */
-  static async freezeStudent(id: number, reason: string) {
+  static async freezeStudent(id: string, reason: string) {
     return prisma.student.update({
       where: { id },
       data: {
@@ -87,7 +87,7 @@ export class StudentService {
   /**
    * Unfreeze student
    */
-  static async unfreezeStudent(id: number) {
+  static async unfreezeStudent(id: string) {
     return prisma.student.update({
       where: { id },
       data: {
@@ -100,7 +100,7 @@ export class StudentService {
   /**
    * Delete student
    */
-  static async deleteStudent(id: number) {
+  static async deleteStudent(id: string) {
     // Delete related records first
     await prisma.rotationQueue.deleteMany({
       where: { studentId: id },

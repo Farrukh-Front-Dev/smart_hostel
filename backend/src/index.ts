@@ -48,7 +48,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 const startServer = async () => {
   try {
     // Test database connection
-    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$runCommandRaw({ ping: 1 });
     console.log('✓ Database connected');
 
     // Initialize scheduler

@@ -97,7 +97,7 @@ export class DutyService {
     });
 
     // Keep explicit Map typing so stricter TS inference doesn't collapse values to unknown
-    const queueMap = new Map<number, (typeof rotationQueues)[number]>();
+    const queueMap = new Map<string, (typeof rotationQueues)[number]>();
     rotationQueues.forEach((queue) => {
       queueMap.set(queue.studentId, queue);
     });
@@ -211,7 +211,7 @@ export class DutyService {
   /**
    * Update duty status
    */
-  static async updateDutyStatus(dutyId: number, status: string) {
+  static async updateDutyStatus(dutyId: string, status: string) {
     return prisma.duty.update({
       where: { id: dutyId },
       data: { status },

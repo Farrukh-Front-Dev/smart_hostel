@@ -1,30 +1,31 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/sqlite-client"
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("SQLITE_DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   name      String
-  role      String   @default("admin") // admin, manager
+  role      String   @default("admin")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Student {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           Int      @id @default(autoincrement())
   username     String   @unique
-  floor        Int      // 1-4
-  room         String?  // Room number
-  fullName     String?  // Full name
-  note         String?  // Additional notes
-  telegramId   String?
+  floor        Int
+  room         String?
+  fullName     String?
+  note         String?
+  telegramId   String?  @unique
   isFrozen     Boolean  @default(false)
   frozenReason String?
   createdAt    DateTime @default(now())
@@ -38,20 +39,20 @@ model Student {
 }
 
 model Duty {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime @unique
-  status    String      @default("pending") // pending, posted, completed
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int           @id @default(autoincrement())
+  date      DateTime      @unique
+  status    String        @default("pending")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   students  DutyStudent[]
 }
 
 model DutyStudent {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  dutyId    String   @db.ObjectId
-  studentId String   @db.ObjectId
-  floor     Int     // Which floor they're assigned to
+  id        Int      @id @default(autoincrement())
+  dutyId    Int
+  studentId Int
+  floor     Int
   createdAt DateTime @default(now())
 
   duty      Duty    @relation(fields: [dutyId], references: [id], onDelete: Cascade)
@@ -63,8 +64,8 @@ model DutyStudent {
 }
 
 model RotationQueue {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  studentId        String   @unique @db.ObjectId
+  id               Int      @id @default(autoincrement())
+  studentId        Int      @unique
   floor            Int
   lastAssignedDate DateTime?
   priority         Int      @default(0)
@@ -76,26 +77,26 @@ model RotationQueue {
 }
 
 model Settings {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  key       String  @unique
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
   value     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Payment {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  studentId   String    @db.ObjectId
+  id          Int      @id @default(autoincrement())
+  studentId   Int
   student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   amount      Float
-  month       String   // e.g., "2026-04" for April 2026
-  status      String   @default("pending") // pending, confirmed, rejected
-  imageUrl    String?  // Telegram file_id or URL
+  month       String
+  status      String   @default("pending")
+  imageUrl    String?
   submittedAt DateTime @default(now())
   reviewedAt  DateTime?
-  reviewedBy  String?  // Admin username
-  note        String?  // Additional notes
-  
+  reviewedBy  String?
+  note        String?
+
   @@index([studentId])
   @@index([month])
   @@index([status])

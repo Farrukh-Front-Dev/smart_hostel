@@ -1,5 +1,6 @@
 import express from 'express';
 import { StudentService } from '../services/studentService';
+import { requireObjectId } from '../utils/objectId';
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.get('/', async (req, res, next) => {
 // Get student by ID
 router.get('/:id', async (req, res, next) => {
   try {
-    const student = await StudentService.getStudentById(parseInt(req.params.id));
+    const student = await StudentService.getStudentById(requireObjectId(req.params.id));
     if (!student) {
       return res.status(404).json({ error: 'Student not found' });
     }
@@ -56,7 +57,7 @@ router.post('/', async (req, res, next) => {
 // Update student
 router.put('/:id', async (req, res, next) => {
   try {
-    const student = await StudentService.updateStudent(parseInt(req.params.id), req.body);
+    const student = await StudentService.updateStudent(requireObjectId(req.params.id), req.body);
     res.json(student);
   } catch (error) {
     next(error);
@@ -71,7 +72,7 @@ router.post('/:id/freeze', async (req, res, next) => {
       return res.status(400).json({ error: 'Reason is required' });
     }
 
-    const student = await StudentService.freezeStudent(parseInt(req.params.id), reason);
+    const student = await StudentService.freezeStudent(requireObjectId(req.params.id), reason);
     res.json(student);
   } catch (error) {
     next(error);
@@ -81,7 +82,7 @@ router.post('/:id/freeze', async (req, res, next) => {
 // Unfreeze student
 router.post('/:id/unfreeze', async (req, res, next) => {
   try {
-    const student = await StudentService.unfreezeStudent(parseInt(req.params.id));
+    const student = await StudentService.unfreezeStudent(requireObjectId(req.params.id));
     res.json(student);
   } catch (error) {
     next(error);
@@ -91,7 +92,7 @@ router.post('/:id/unfreeze', async (req, res, next) => {
 // Delete student
 router.delete('/:id', async (req, res, next) => {
   try {
-    await StudentService.deleteStudent(parseInt(req.params.id));
+    await StudentService.deleteStudent(requireObjectId(req.params.id));
     res.json({ message: 'Student deleted' });
   } catch (error) {
     next(error);
