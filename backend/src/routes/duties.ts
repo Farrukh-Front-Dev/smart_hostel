@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/today', async (req, res, next) => {
   try {
     const today = new Date();
+    await DutyService.ensureDutyForDate(today);
     const duties = await DutyService.getDutiesForDate(today);
 
     if (!duties) {
@@ -25,6 +26,7 @@ router.get('/tomorrow', async (req, res, next) => {
   try {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    await DutyService.ensureDutyForDate(tomorrow);
     const duties = await DutyService.getDutiesForDate(tomorrow);
 
     if (!duties) {
@@ -45,6 +47,7 @@ router.get('/date/:date', async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid date format' });
     }
 
+    await DutyService.ensureDutyForDate(date);
     const duties = await DutyService.getDutiesForDate(date);
 
     if (!duties) {
@@ -71,6 +74,11 @@ router.get('/range', async (req, res, next) => {
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       return res.status(400).json({ error: 'Invalid date format' });
+    }
+
+    const diffDays = Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+    if (diffDays >= 0 && diffDays <= 31) {
+      await DutyService.ensureDutyWindow(start, diffDays);
     }
 
     const duties = await DutyService.getDutiesForRange(start, end);

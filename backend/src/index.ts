@@ -11,6 +11,7 @@ import paymentRoutes from './routes/payments';
 import statusRoutes from './routes/status';
 import { initializeScheduler } from './cron/scheduler';
 import { startKeepAlive } from './keepAlive';
+import { DutyService } from './services/dutyService';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -54,6 +55,10 @@ const startServer = async () => {
     // Initialize scheduler
     initializeScheduler();
     console.log('✓ Scheduler initialized');
+
+    // Backfill a small duty window so the UI always has current data after restarts or migrations
+    await DutyService.ensureDutyWindow(new Date(), 7);
+    console.log('✓ Duty window ensured');
 
     // Start keep-alive for Render free tier
     if (process.env.NODE_ENV === 'production') {

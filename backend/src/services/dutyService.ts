@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const DUTY_TIMEZONE_OFFSET_MS = 5 * 60 * 60 * 1000;
 
 /**
  * Duty generation algorithm:
@@ -11,12 +12,51 @@ const prisma = new PrismaClient();
  * - Skips frozen peers automatically
  */
 export class DutyService {
+  private static normalizeDutyDate(date: Date): Date {
+    const shifted = new Date(date.getTime() + DUTY_TIMEZONE_OFFSET_MS);
+
+    return new Date(
+      Date.UTC(
+        shifted.getUTCFullYear(),
+        shifted.getUTCMonth(),
+        shifted.getUTCDate()
+      ) - DUTY_TIMEZONE_OFFSET_MS
+    );
+  }
+
+  private static formatDutyDate(date: Date): string {
+    return new Date(date.getTime() + DUTY_TIMEZONE_OFFSET_MS)
+      .toISOString()
+      .split('T')[0];
+  }
+
+  static async ensureDutyForDate(date: Date) {
+    const dateOnly = this.normalizeDutyDate(date);
+    const existingDuty = await prisma.duty.findUnique({
+      where: { date: dateOnly },
+    });
+
+    if (existingDuty) {
+      return existingDuty;
+    }
+
+    return this.generateDutiesForDate(date);
+  }
+
+  static async ensureDutyWindow(startDate: Date, daysAhead: number) {
+    for (let day = 0; day <= daysAhead; day++) {
+      const targetDate = new Date(startDate);
+      targetDate.setDate(startDate.getDate() + day);
+      await this.ensureDutyForDate(targetDate);
+    }
+  }
+
   /**
    * Generate duties for a specific date
    * Assigns 3 students per floor (12 total students per day)
    */
   static async generateDutiesForDate(date: Date): Promise<any> {
-    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dateOnly = this.normalizeDutyDate(date);
 
     // Check if duties already exist for this date
     const existingDuty = await prisma.duty.findUnique({
@@ -24,7 +64,7 @@ export class DutyService {
     });
 
     if (existingDuty) {
-      console.log(`Duties already exist for ${dateOnly.toISOString().split('T')[0]}`);
+      console.log(`Duties already exist for ${this.formatDutyDate(dateOnly)}`);
       return existingDuty;
     }
 
@@ -58,7 +98,7 @@ export class DutyService {
       }
     }
 
-    console.log(`✓ Duties generated for ${dateOnly.toISOString().split('T')[0]}`);
+    console.log(`✓ Duties generated for ${this.formatDutyDate(dateOnly)}`);
     return duty;
   }
 
@@ -133,7 +173,7 @@ export class DutyService {
    * Get duties for a specific date with students
    */
   static async getDutiesForDate(date: Date) {
-    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dateOnly = this.normalizeDutyDate(date);
 
     const duty = await prisma.duty.findUnique({
       where: { date: dateOnly },
@@ -160,7 +200,7 @@ export class DutyService {
 
     return {
       id: duty.id,
-      date: duty.date.toISOString().split('T')[0],
+      date: this.formatDutyDate(duty.date),
       status: duty.status,
       byFloor,
       allStudents: duty.students.map((ds: any) => ds.student),
@@ -171,11 +211,14 @@ export class DutyService {
    * Get duties for a date range
    */
   static async getDutiesForRange(startDate: Date, endDate: Date) {
+    const normalizedStartDate = this.normalizeDutyDate(startDate);
+    const normalizedEndDate = this.normalizeDutyDate(endDate);
+
     const duties = await prisma.duty.findMany({
       where: {
         date: {
-          gte: startDate,
-          lte: endDate,
+          gte: normalizedStartDate,
+          lte: normalizedEndDate,
         },
       },
       include: {
@@ -200,7 +243,7 @@ export class DutyService {
 
       return {
         id: duty.id,
-        date: duty.date.toISOString().split('T')[0],
+        date: this.formatDutyDate(duty.date),
         status: duty.status,
         byFloor,
         allStudents: duty.students.map((ds: any) => ds.student),
